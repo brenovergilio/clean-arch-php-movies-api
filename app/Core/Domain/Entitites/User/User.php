@@ -10,7 +10,7 @@ class User {
   private Email $email;
 
   public function __construct(
-    private string|int $id,
+    private string|int|null $id,
     private string $name,
     string $cpf,
     string $email,
@@ -23,7 +23,7 @@ class User {
     $this->email = new Email($email);
   }
 
-  public function id(): string|int {
+  public function id(): string|int|null {
     return $this->id;
   }
 
