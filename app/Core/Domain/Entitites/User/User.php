@@ -14,6 +14,7 @@ class User {
     private string $name,
     string $cpf,
     string $email,
+    private string $password,
     private Role $role,
     private ?string $photo,
     private bool $emailConfirmed
@@ -38,6 +39,10 @@ class User {
     return $this->email->getValue();
   }
 
+  public function password(): string {
+    return $this->password;
+  }
+
   public function cpf(): string {
     return $this->cpf->getValue();
   }
@@ -53,6 +58,14 @@ class User {
 
   public function confirmEmail(): void {
     $this->emailConfirmed = true;
+  }
+
+  public function changeEmail(string $email): void {
+    $this->email = new Email($email);
+  }
+
+  public function changePassword(string $password): void {
+    $this->password = $password;
   }
 
   public function changeCPF(string $cpf): void {
