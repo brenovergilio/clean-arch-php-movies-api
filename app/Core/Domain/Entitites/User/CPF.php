@@ -13,6 +13,10 @@ class CPF {
     $this->validateCPF();
   }
 
+  function getValue(): ?string {
+    return $this->value;
+  }
+
   private function keepJustNumbers(string $value): string {
     return preg_replace('/[^0-9]/', '', $value);
   }

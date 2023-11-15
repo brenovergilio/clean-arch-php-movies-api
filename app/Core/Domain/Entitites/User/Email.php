@@ -11,6 +11,10 @@ class Email {
     $this->validateEmail();
   }
 
+  function getValue(): ?string {
+    return $this->value;
+  }
+
   private function validateEmail() {
     $fieldName = "Email";
     
