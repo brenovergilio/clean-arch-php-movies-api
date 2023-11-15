@@ -5,8 +5,9 @@ use App\Core\Domain\Exceptions\InvalidFieldException;
 
 class CPF {
   public function __construct(
-    private string $value
+    private string | null $value
   ) {
+
     $this->value = $this->keepJustNumbers($value);
     $this->validateCPF();
   }
@@ -17,6 +18,8 @@ class CPF {
 
   private function validateCPF() {
     $fieldName = "CPF";
+
+    if(!isset($this->value)) throw new InvalidFieldException($fieldName);
 
     if(strlen($this->value !== 11)) throw new InvalidFieldException($fieldName);
 
