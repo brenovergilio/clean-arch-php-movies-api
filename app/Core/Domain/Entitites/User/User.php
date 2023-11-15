@@ -2,6 +2,7 @@
 
 namespace App\Core\Domain\Entities\User;
 use App\Core\Domain\Entities\Role;
+use App\Core\Domain\Exceptions\MissingRequiredFieldException;
 
 class User {
 
@@ -14,7 +15,7 @@ class User {
     string $cpf,
     string $email,
     private Role $role,
-    private string $photo,
+    private ?string $photo,
     private bool $emailConfirmed
   ) {
     $this->cpf = new CPF($cpf);
@@ -25,12 +26,37 @@ class User {
     return $this->id;
   }
 
+  public function name(): string {
+    return $this->name;
+  }
+
+  public function photo(): ?string {
+    return $this->photo;
+  }
+
   public function email(): string {
     return $this->email->getValue();
   }
 
   public function cpf(): string {
     return $this->cpf->getValue();
+  }
+
+  public function changeName(string $name): void {
+    if(!isset($name)) throw new MissingRequiredFieldException("Name");
+    $this->name = $name;
+  }
+
+  public function changePhoto(string $photo): void {
+    $this->photo = $photo;
+  }
+
+  public function confirmEmail(): void {
+    $this->emailConfirmed = true;
+  }
+
+  public function changeCPF(string $cpf): void {
+    $this->cpf = new CPF($cpf);
   }
 
   public function isEmailConfirmed(): bool {
