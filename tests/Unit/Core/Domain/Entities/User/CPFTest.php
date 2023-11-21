@@ -7,9 +7,16 @@ it("should return a CPF with numbers only", function () {
   expect($cpf->getValue())->toBe("14629037039");
 });
 
-it("should return null because parameter was null", function () {
-  $cpf = new CPF(null);
-  expect($cpf->getValue())->toBe(null);
+it("should throw an MissingRequiredFieldException because parameter was null", function () {
+  expect(function() {
+    new CPF(null);
+  })->toThrow("Field CPF is missing");
+});
+
+it("should throw an MissingRequiredFieldException because parameter was empty", function () {
+  expect(function() {
+    new CPF("");
+  })->toThrow("Field CPF is missing");
 });
 
 it("should throw an InvalidFieldException because parameter does not has 11 digits", function () {

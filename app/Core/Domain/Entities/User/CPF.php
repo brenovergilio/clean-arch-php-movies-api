@@ -2,6 +2,7 @@
 
 namespace App\Core\Domain\Entities\User;
 use App\Core\Domain\Exceptions\InvalidFieldException;
+use App\Core\Domain\Exceptions\MissingRequiredFieldException;
 
 class CPF {
 
@@ -13,7 +14,7 @@ class CPF {
     $this->validateCPF();
   }
 
-  function getValue(): ?string {
+  function getValue(): string {
     return $this->value;
   }
 
@@ -25,7 +26,7 @@ class CPF {
   private function validateCPF() {
     $fieldName = "CPF";
 
-    if(!$this->value) return;
+    if(!$this->value) throw new MissingRequiredFieldException($fieldName);
     if(strlen($this->value) !== 11) throw new InvalidFieldException($fieldName);
   }
 }

@@ -19,7 +19,7 @@ class User {
     private ?string $photo,
     private bool $emailConfirmed
   ) {
-    $this->cpf = new CPF($cpf);
+    if($cpf) $this->cpf = new CPF($cpf);
     $this->email = new Email($email);
   }
 
