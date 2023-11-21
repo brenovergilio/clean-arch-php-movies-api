@@ -18,7 +18,7 @@ class Email {
   private function validateEmail() {
     $fieldName = "Email";
     
-    if(!isset($this->value)) throw new MissingRequiredFieldException($fieldName);
+    if(!$this->value) throw new MissingRequiredFieldException($fieldName);
 
     if(!preg_match(Email::regex, $this->value)) throw new InvalidFieldException($fieldName);
   }
