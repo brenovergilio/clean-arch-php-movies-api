@@ -1,5 +1,49 @@
 <?php
+use App\Core\Domain\Entities\User\Role;
+use App\Core\Domain\Entities\User\User;
 
-it("", function () {
-  expect(1)->toBe(1);
+beforeEach(function() {
+  $this->user = new User("id", "Name", "146.290.370-39", "valid@mail.com", "hashedPassword", Role::ADMIN, "pathToPhoto", true);
+});
+
+it("should return the right values when using getters", function () {
+  expect($this->user->id())->toBe("id");
+  expect($this->user->name())->toBe("Name");
+  expect($this->user->cpf())->toBe("14629037039");
+  expect($this->user->email())->toBe("valid@mail.com");
+  expect($this->user->password())->toBe("hashedPassword");
+  expect($this->user->photo())->toBe("pathToPhoto");
+});
+
+it("should return true when calling isAdmin()", function() {
+  expect($this->user->isAdmin())->toBeTrue();
+});
+
+it("should return true when calling isEmailConfirmed()", function() {
+  expect($this->user->isEmailConfirmed())->toBeTrue();
+});
+
+it("should return confirm user email", function() {
+  $user = new User("id", "name", "146.290.370-39", "valid@mail.com", "hashedPassword", Role::ADMIN, "pathToPhoto", false);
+  expect($user->isEmailConfirmed())->toBeFalse();
+  $user->confirmEmail();
+  expect($user->isEmailConfirmed())->toBeTrue();
+});
+
+it("should change user password", function() {
+  expect($this->user->password())->toBe("hashedPassword");
+  $this->user->changePassword("newHashedPassword");
+  expect($this->user->password())->toBe("newHashedPassword");
+});
+
+it("should change user photo path", function() {
+  expect($this->user->photo())->toBe("pathToPhoto");
+  $this->user->changePhoto("pathToNewPhoto");
+  expect($this->user->photo())->toBe("pathToNewPhoto");
+});
+
+it("should change user name", function() {
+  expect($this->user->name())->toBe("Name");
+  $this->user->changeName("Another Name");
+  expect($this->user->name())->toBe("Another Name");
 });

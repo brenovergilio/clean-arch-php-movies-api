@@ -2,7 +2,6 @@
 
 namespace App\Core\Domain\Entities\User;
 use App\Core\Domain\Entities\User\Role;
-use App\Core\Domain\Exceptions\MissingRequiredFieldException;
 
 class User {
 
@@ -48,7 +47,6 @@ class User {
   }
 
   public function changeName(string $name): void {
-    if(!isset($name)) throw new MissingRequiredFieldException("Name");
     $this->name = $name;
   }
 
