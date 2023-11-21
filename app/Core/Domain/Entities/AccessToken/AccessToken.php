@@ -10,12 +10,12 @@ class AccessToken {
   public function __construct(
     private AccessTokenIntent $intent,
     private string|int $relatedUserId,
-    private int $timeToLeave,
+    private int $timeToLeaveInSeconds,
     private DateTime $createdAt,
     private ?string $token
   ) {
-    if(!isset($token)) { 
-      $this->token = $this->generateNewToken();
+    if(!$token) { 
+      $this->generateNewToken();
     }
   }
 
@@ -23,13 +23,18 @@ class AccessToken {
     return $this->token;
   }
 
-  public function generateNewToken(): string {
+  public function generateNewToken(): void {
     $tokenLength = 6;
-    return Helpers::generateRandomString($tokenLength);
+
+    do {
+      $newToken = Helpers::generateRandomString($tokenLength);
+    } while ($newToken === $this->token);
+
+    $this->token = $newToken;
   }
 
   public function isExpired(): bool
   {
-    return $this->createdAt->getTimestamp() + $this->timeToLeave < time();
+    return $this->createdAt->getTimestamp() + $this->timeToLeaveInSeconds < time();
   }
 }
