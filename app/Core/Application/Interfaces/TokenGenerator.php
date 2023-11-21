@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\Application\Interface;
+namespace App\Core\Application\Interfaces;
 
 interface TokenGenerator
 {

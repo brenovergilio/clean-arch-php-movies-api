@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Core\Domain\Entities\AccessToken;
+use App\Core\Domain\Entities\AccessToken\AccessToken;
 
 interface AccessTokenRepository {
   public function create(AccessToken $accessToken): void;

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Core\Domain\Entities\AccessToken;
+use App\Core\Domain\Entities\AccessToken\AccessTokenIntent;
 use App\Core\Domain\Helpers;
 use DateTime;
 
