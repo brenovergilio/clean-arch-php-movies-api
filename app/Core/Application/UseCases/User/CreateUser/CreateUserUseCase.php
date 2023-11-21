@@ -11,7 +11,7 @@ use App\Core\Application\UseCases\User\CreateUser\DTO\CreateUserInputDTO;
 use App\Core\Domain\Entities\AccessToken\AccessToken;
 use App\Core\Domain\Entities\AccessToken\AccessTokenIntent;
 use App\Core\Domain\Entities\AccessToken\AccessTokenRepository;
-use App\Core\Domain\Entities\Role;
+use App\Core\Domain\Entities\User\Role;
 use App\Core\Domain\Entities\User\User;
 use App\Core\Domain\Entities\User\UserRepository;
 use App\Core\Domain\Helpers;
@@ -30,7 +30,7 @@ class CreateUserUseCase extends BaseUseCase {
 
     if($input->password !== $input->passwordConfirmation) throw new PasswordAndConfirmationMismatchException;
 
-    $photoPath = $input->photo->upload();
+    $photoPath = $input->photo?->upload();
 
     $hashedPassword = $this->hashGenerator->generate($input->password);
 
@@ -45,9 +45,9 @@ class CreateUserUseCase extends BaseUseCase {
       false
     );
 
-    $this->userRepository->create($user);
+    $userFromDB = $this->userRepository->create($user, true);
 
-    $token = $this->generateNewToken($user->id());
+    $token = $this->generateNewToken($userFromDB->id());
 
     $this->emailSender->sendMail($input->email, "Confirm your account", [
       "token" => $token
@@ -58,7 +58,7 @@ class CreateUserUseCase extends BaseUseCase {
     $userByEmail = $this->userRepository->findByEmail($input->email);
     if($userByEmail) throw new DuplicatedUniqueFieldException("Email");
 
-    $userByCPF = $this->userRepository->findByEmail($input->email);
+    $userByCPF = $this->userRepository->findByCPF($input->cpf);
     if($userByCPF) throw new DuplicatedUniqueFieldException("CPF");
   }
 

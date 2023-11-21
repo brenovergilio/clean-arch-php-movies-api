@@ -3,7 +3,7 @@
 namespace App\Core\Domain\Entities\User;
 
 interface UserRepository {
-  public function create(User $user): void;
+  public function create(User $user, bool $returning): ?User;
   public function update(User $user): void;
   public function findByID(string|int $id): ?User;
   public function findByEmail(string $email): ?User;
