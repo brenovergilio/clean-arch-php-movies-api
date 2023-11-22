@@ -47,3 +47,16 @@ it("should change user name", function() {
   $this->user->changeName("Another Name");
   expect($this->user->name())->toBe("Another Name");
 });
+
+it("should change user email and set emailConfirmed property to false after that", function() {
+  expect($this->user->email())->toBe("valid@mail.com");
+  $this->user->changeEmail("anotherValid@mail.com");
+  expect($this->user->name())->toBe("anotherValid@mail.com");
+  expect($this->isEmailConfirmed())->toBeFalse();
+});
+
+it("should change user CPF", function() {
+  expect($this->user->cpf())->toBe("14629037039");
+  $this->user->changeCPF("904.051.380-59");
+  expect($this->user->cpf())->toBe("90405138059");
+});

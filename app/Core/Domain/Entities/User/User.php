@@ -47,6 +47,8 @@ class User {
   }
 
   public function changeName(string $name): void {
+    if($name == $this->name) return;
+
     $this->name = $name;
   }
 
@@ -59,7 +61,10 @@ class User {
   }
 
   public function changeEmail(string $email): void {
+    if($email == $this->email()) return;
+
     $this->email = new Email($email);
+    $this->emailConfirmed = false;
   }
 
   public function changePassword(string $password): void {
@@ -67,6 +72,8 @@ class User {
   }
 
   public function changeCPF(string $cpf): void {
+    if($cpf == $this->cpf()) return;
+
     $this->cpf = new CPF($cpf);
   }
 

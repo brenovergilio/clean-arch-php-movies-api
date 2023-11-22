@@ -24,9 +24,8 @@ class CPF {
   }
 
   private function validateCPF() {
-    $fieldName = "CPF";
-
-    if(!$this->value) throw new MissingRequiredFieldException($fieldName);
-    if(strlen($this->value) !== 11) throw new InvalidFieldException($fieldName);
+    if(!$this->value) throw new MissingRequiredFieldException(CPF::class);
+    
+    if(strlen($this->value) !== 11) throw new InvalidFieldException(CPF::class);
   }
 }

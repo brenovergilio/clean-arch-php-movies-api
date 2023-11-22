@@ -3,11 +3,9 @@
 namespace App\Core\Application\UseCases\User\CreateUser;
 
 use App\Core\Application\Exceptions\DuplicatedUniqueFieldException;
-use App\Core\Application\Exceptions\PasswordAndConfirmationMismatchException;
-use App\Core\Application\Interfaces\HashGenerator;
 use App\Core\Application\Interfaces\EmailSender;
 use App\Core\Application\UseCases\BaseUseCase;
-use App\Core\Application\UseCases\User\CreateUser\DTO\CreateUserInputDTO;
+use App\Core\Application\UseCases\User\UpdateUser\DTO\UpdateUserInputDTO;
 use App\Core\Domain\Entities\AccessToken\AccessToken;
 use App\Core\Domain\Entities\AccessToken\AccessTokenIntent;
 use App\Core\Domain\Entities\AccessToken\AccessTokenRepository;
@@ -16,48 +14,51 @@ use App\Core\Domain\Entities\User\CPF;
 use App\Core\Domain\Entities\User\Role;
 use App\Core\Domain\Entities\User\User;
 use App\Core\Domain\Entities\User\UserRepository;
+use App\Core\Domain\Exceptions\EntityNotFoundException;
 use App\Core\Domain\Helpers;
 use DateTime;
 
-class CreateUserUseCase extends BaseUseCase {
+class UpdateUserUseCase extends BaseUseCase {
   public function __construct(
     private UserRepository $userRepository,
     private AccessTokenRepository $accessTokenRepository,
-    private HashGenerator $hashGenerator,
-    private EmailSender $emailSender
+    private EmailSender $emailSender,
+    private User $loggedUser
   ) {}
 
-  public function execute(CreateUserInputDTO $input): void {
+  public function execute(UpdateUserInputDTO $input): void {
     $this->validateUniqueness($input);
 
-    if($input->password !== $input->passwordConfirmation) throw new PasswordAndConfirmationMismatchException;
+    $user = $this->userRepository->findByID($input->id);
 
-    $photoPath = $input->photo?->upload();
+    if(!$user) throw new EntityNotFoundException(User::class);
 
-    $hashedPassword = $this->hashGenerator->generate($input->password);
+    $emailHasChanged = $input->email !== $user->email();
 
-    $user = new User(
-      null,
-      $input->name,
-      $input->cpf,
-      $input->email,
-      $hashedPassword,
-      Role::CLIENT,
-      $photoPath,
-      false
-    );
+    $this->mergeProperties($input, $user);
 
-    $userFromDB = $this->userRepository->create($user, true);
+    $this->userRepository->update($user);
 
-    $this->handleTokenSending($userFromDB);
+    if($emailHasChanged) $this->handleTokenSending($user);
   }
 
-  private function validateUniqueness(CreateUserInputDTO $input): void {
+  private function validateUniqueness(UpdateUserInputDTO $input): void {
     $userByEmail = $this->userRepository->findByEmail($input->email);
-    if($userByEmail) throw new DuplicatedUniqueFieldException(Email::class);
+    if($userByEmail && $userByEmail->id() !== $this->loggedUser->id()) throw new DuplicatedUniqueFieldException(Email::class);
 
     $userByCPF = $this->userRepository->findByCPF($input->cpf);
-    if($userByCPF) throw new DuplicatedUniqueFieldException(CPF::class);
+    if($userByCPF && $userByCPF->id() !== $this->loggedUser->id()) throw new DuplicatedUniqueFieldException(CPF::class);
+  }
+
+  private function mergeProperties(UpdateUserInputDTO $input, User $user): void
+  {
+    if($input->email) $user->changeEmail($input->email);
+
+    if($input->cpf) $user->changeCPF($input->cpf);
+
+    if($input->name) $user->changeName($input->name);
+
+    if($input->photo) $user->changePhoto($input->photo?->upload());
   }
 
   private function generateNewToken(string|int $userId): AccessToken {

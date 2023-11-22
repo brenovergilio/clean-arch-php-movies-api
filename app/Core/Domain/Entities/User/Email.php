@@ -15,11 +15,9 @@ class Email {
     return $this->value;
   }
 
-  private function validateEmail() {
-    $fieldName = "Email";
+  private function validateEmail() {    
+    if(!$this->value) throw new MissingRequiredFieldException(Email::class);
     
-    if(!$this->value) throw new MissingRequiredFieldException($fieldName);
-
-    if(!preg_match(Email::regex, $this->value)) throw new InvalidFieldException($fieldName);
+    if(!preg_match(Email::regex, $this->value)) throw new InvalidFieldException(Email::class);
   }
 }
