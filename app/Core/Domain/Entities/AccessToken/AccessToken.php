@@ -27,7 +27,7 @@ class AccessToken {
     $tokenLength = 6;
 
     do {
-      $newToken = Helpers::generateRandomString($tokenLength);
+      $newToken = strtoupper(Helpers::generateRandomString($tokenLength));
     } while ($newToken === $this->token);
 
     $this->token = $newToken;
