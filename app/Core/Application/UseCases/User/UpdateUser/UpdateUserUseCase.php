@@ -27,6 +27,7 @@ class UpdateUserUseCase extends BaseUseCase {
   ) {}
 
   public function execute(UpdateUserInputDTO $input): void {
+    $this->checkSameUser($this->loggedUser, $input->id);
     $this->validateUniqueness($input);
 
     $user = $this->userRepository->findByID($input->id);
