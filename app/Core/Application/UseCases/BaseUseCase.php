@@ -2,10 +2,19 @@
 
 namespace App\Core\Application\UseCases;
 use App\Core\Application\Exceptions\InsufficientPermissionsException;
-use App\Core\Domain\Entities\Role;
+use App\Core\Domain\Entities\User\Role;
+use App\Core\Domain\Entities\User\User;
 
 abstract class BaseUseCase {
-  protected function checkRole(array $allowedRoles, Role $role) {
+  protected function checkRole(array $allowedRoles, Role $role): void {
     if(!in_array($role, $allowedRoles)) throw new InsufficientPermissionsException;
+  }
+
+  protected function checkSameUser(User $user, string|int $id): void {
+    if($user->id() !== $id) throw new InsufficientPermissionsException;
+  }
+
+  protected function checkEmailConfirmed(User $user): void {
+    if(!$user->isEmailConfirmed()) throw new InsufficientPermissionsException;
   }
 }
