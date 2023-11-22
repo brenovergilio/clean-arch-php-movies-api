@@ -6,17 +6,14 @@ use App\Core\Application\Exceptions\DuplicatedUniqueFieldException;
 use App\Core\Application\Interfaces\EmailSender;
 use App\Core\Application\UseCases\BaseUseCase;
 use App\Core\Application\UseCases\User\UpdateUser\DTO\UpdateUserInputDTO;
-use App\Core\Domain\Entities\AccessToken\AccessToken;
 use App\Core\Domain\Entities\AccessToken\AccessTokenIntent;
 use App\Core\Domain\Entities\AccessToken\AccessTokenRepository;
 use App\Core\Domain\Entities\User\Email;
 use App\Core\Domain\Entities\User\CPF;
-use App\Core\Domain\Entities\User\Role;
 use App\Core\Domain\Entities\User\User;
 use App\Core\Domain\Entities\User\UserRepository;
 use App\Core\Domain\Exceptions\EntityNotFoundException;
-use App\Core\Domain\Helpers;
-use DateTime;
+use App\Core\Domain\Traits\EmailTokenSenderTrait;
 
 class UpdateUserUseCase extends BaseUseCase {
   public function __construct(
@@ -25,6 +22,8 @@ class UpdateUserUseCase extends BaseUseCase {
     private EmailSender $emailSender,
     private User $loggedUser
   ) {}
+
+  use EmailTokenSenderTrait;
 
   public function execute(UpdateUserInputDTO $input): void {
     $this->checkSameUser($this->loggedUser, $input->id);
@@ -40,7 +39,7 @@ class UpdateUserUseCase extends BaseUseCase {
 
     $this->userRepository->update($user);
 
-    if($emailHasChanged) $this->handleTokenSending($user);
+    if($emailHasChanged) $this->handleTokenSending($user, AccessTokenIntent::CONFIRM_EMAIL);
   }
 
   private function validateUniqueness(UpdateUserInputDTO $input): void {
@@ -60,23 +59,5 @@ class UpdateUserUseCase extends BaseUseCase {
     if($input->name) $user->changeName($input->name);
 
     if($input->photo) $user->changePhoto($input->photo?->upload());
-  }
-
-  private function generateNewToken(string|int $userId): AccessToken {
-    $accessToken = new AccessToken(AccessTokenIntent::CONFIRM_EMAIL, $userId, Helpers::ONE_HOUR_IN_SECONDS, new DateTime(), null);
-
-    while ($this->accessTokenRepository->find($accessToken->getToken())) {
-      $accessToken->generateNewToken();
-    }
-
-    return $accessToken;
-  }
-
-  private function handleTokenSending(User $user): void {
-    $token = $this->generateNewToken($user->id());
-
-    $this->emailSender->sendMail($user->email(), "Confirm your account", [
-      "token" => $token
-    ]);
   }
 }
