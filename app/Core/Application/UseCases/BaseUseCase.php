@@ -6,8 +6,8 @@ use App\Core\Domain\Entities\User\Role;
 use App\Core\Domain\Entities\User\User;
 
 abstract class BaseUseCase {
-  public function checkRole(array $allowedRoles, Role $role): void {
-    if(!in_array($role, $allowedRoles)) throw new InsufficientPermissionsException;
+  public function checkAdmin(User $user): void {
+    if(!$user->isAdmin()) throw new InsufficientPermissionsException;
   }
 
   public function checkSameUser(User $user, string|int $id): void {

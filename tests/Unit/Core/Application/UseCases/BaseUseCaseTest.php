@@ -8,9 +8,11 @@ beforeEach(function() {
   $this->sut = new BaseUseCaseTest();
 });
 
-it("should throw an InsufficientPermissionsException when calling checkRole() because user role is not in the allowed roles", function() {
-  expect(function() {
-    $this->sut->checkRole([Role::ADMIN], Role::CLIENT);
+it("should throw an InsufficientPermissionsException when calling checkAdmin() because user role is client", function() {
+  $user = new \App\Core\Domain\Entities\User\User("id", "name", "146.290.370-39", "valid@mail.com", "password", \App\Core\Domain\Entities\User\Role::CLIENT, 'photo', true);
+
+  expect(function() use ($user) {
+    $this->sut->checkAdmin($user);
   })->toThrow("Insufficient Permissions");
 });
 

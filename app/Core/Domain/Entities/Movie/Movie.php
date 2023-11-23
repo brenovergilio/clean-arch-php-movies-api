@@ -7,7 +7,7 @@ class Movie {
   const CLASS_NAME = "Movie";
 
   public function __construct(
-    private string|int $id,
+    private string|int|null $id,
     private string $title,
     private string $synopsis,
     private string $directorName,
@@ -18,7 +18,7 @@ class Movie {
     private DateTime $addedAt
   ) {}
 
-  public function id(): string|int {
+  public function id(): string|int|null {
     return $this->id;
   }
 
