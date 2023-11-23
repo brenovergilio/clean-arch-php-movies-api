@@ -8,5 +8,4 @@ interface UserRepository {
   public function findByID(string|int $id): ?User;
   public function findByEmail(string $email): ?User;
   public function findByCPF(string $email): ?User;
-  public function delete(string|int $id): void;
 }
