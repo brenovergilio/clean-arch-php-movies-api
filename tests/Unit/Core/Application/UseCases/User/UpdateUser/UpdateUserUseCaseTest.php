@@ -7,8 +7,6 @@ use App\Core\Domain\Entities\AccessToken\AccessTokenRepository;
 use App\Core\Domain\Entities\User\Role;
 use App\Core\Domain\Entities\User\User;
 use App\Core\Domain\Entities\User\UserRepository;
-use Pest\Expectation;
-use Pest\Matchers\Any;
 
 beforeEach(function() {
   $this->userRepositoryMock = Mockery::mock(UserRepository::class);
