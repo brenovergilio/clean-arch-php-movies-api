@@ -4,7 +4,7 @@ namespace App\Core\Domain\Entities\User;
 use App\Core\Domain\Entities\User\Role;
 
 class User {
-
+  const CLASS_NAME = "User";
   private CPF $cpf;
   private Email $email;
 

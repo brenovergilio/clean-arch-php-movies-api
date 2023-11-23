@@ -5,7 +5,7 @@ use App\Core\Domain\Exceptions\InvalidFieldException;
 use App\Core\Domain\Exceptions\MissingRequiredFieldException;
 
 class CPF {
-
+  const CLASS_NAME = "CPF";
   public function __construct(
     private ?string $value
   ) {
@@ -24,8 +24,8 @@ class CPF {
   }
 
   private function validateCPF() {
-    if(!$this->value) throw new MissingRequiredFieldException(CPF::class);
-    
-    if(strlen($this->value) !== 11) throw new InvalidFieldException(CPF::class);
+    if(!$this->value) throw new MissingRequiredFieldException(CPF::CLASS_NAME);
+
+    if(strlen($this->value) !== 11) throw new InvalidFieldException(CPF::CLASS_NAME);
   }
 }

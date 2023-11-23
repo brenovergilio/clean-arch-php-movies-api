@@ -51,8 +51,8 @@ it("should change user name", function() {
 it("should change user email and set emailConfirmed property to false after that", function() {
   expect($this->user->email())->toBe("valid@mail.com");
   $this->user->changeEmail("anotherValid@mail.com");
-  expect($this->user->name())->toBe("anotherValid@mail.com");
-  expect($this->isEmailConfirmed())->toBeFalse();
+  expect($this->user->email())->toBe("anotherValid@mail.com");
+  expect($this->user->isEmailConfirmed())->toBeFalse();
 });
 
 it("should change user CPF", function() {

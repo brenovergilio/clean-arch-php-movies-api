@@ -54,9 +54,9 @@ class CreateUserUseCase extends BaseUseCase {
 
   private function validateUniqueness(CreateUserInputDTO $input): void {
     $userByEmail = $this->userRepository->findByEmail($input->email);
-    if($userByEmail) throw new DuplicatedUniqueFieldException(Email::class);
+    if($userByEmail) throw new DuplicatedUniqueFieldException(Email::CLASS_NAME);
 
     $userByCPF = $this->userRepository->findByCPF($input->cpf);
-    if($userByCPF) throw new DuplicatedUniqueFieldException(CPF::class);
+    if($userByCPF) throw new DuplicatedUniqueFieldException(CPF::CLASS_NAME);
   }
 }

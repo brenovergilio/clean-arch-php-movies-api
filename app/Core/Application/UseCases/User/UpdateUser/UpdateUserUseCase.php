@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\Application\UseCases\User\CreateUser;
+namespace App\Core\Application\UseCases\User\UpdateUser;
 
 use App\Core\Application\Exceptions\DuplicatedUniqueFieldException;
 use App\Core\Application\Interfaces\EmailSender;
@@ -31,7 +31,7 @@ class UpdateUserUseCase extends BaseUseCase {
 
     $user = $this->userRepository->findByID($input->id);
 
-    if(!$user) throw new EntityNotFoundException(User::class);
+    if(!$user) throw new EntityNotFoundException(User::CLASS_NAME);
 
     $emailHasChanged = $input->email !== $user->email();
 
@@ -44,10 +44,10 @@ class UpdateUserUseCase extends BaseUseCase {
 
   private function validateUniqueness(UpdateUserInputDTO $input): void {
     $userByEmail = $this->userRepository->findByEmail($input->email);
-    if($userByEmail && $userByEmail->id() !== $this->loggedUser->id()) throw new DuplicatedUniqueFieldException(Email::class);
+    if($userByEmail && $userByEmail->id() !== $this->loggedUser->id()) throw new DuplicatedUniqueFieldException(Email::CLASS_NAME);
 
     $userByCPF = $this->userRepository->findByCPF($input->cpf);
-    if($userByCPF && $userByCPF->id() !== $this->loggedUser->id()) throw new DuplicatedUniqueFieldException(CPF::class);
+    if($userByCPF && $userByCPF->id() !== $this->loggedUser->id()) throw new DuplicatedUniqueFieldException(CPF::CLASS_NAME);
   }
 
   private function mergeProperties(UpdateUserInputDTO $input, User $user): void
