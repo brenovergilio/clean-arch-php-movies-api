@@ -27,11 +27,11 @@ class UpdateUserUseCase extends BaseUseCase {
 
   public function execute(UpdateUserInputDTO $input): void {
     $this->checkSameUser($this->loggedUser, $input->id);
-    $this->validateUniqueness($input);
 
     $user = $this->userRepository->findByID($input->id);
-
     if(!$user) throw new EntityNotFoundException(User::CLASS_NAME);
+    
+    $this->validateUniqueness($input);
 
     $emailHasChanged = $input->email !== $user->email();
 

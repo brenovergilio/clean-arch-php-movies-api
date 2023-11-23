@@ -12,10 +12,10 @@ trait EmailTokenSenderTrait {
   
   public function handleTokenSending(User $user, AccessTokenIntent $intent): void {
     $token = $this->generateUniqueToken($user->id(), $intent, Helpers::ONE_HOUR_IN_SECONDS);
-    $subject = $intent === AccessTokenIntent::CONFIRM_EMAIL ? "Confirm your account" : "Recover your password";
+    $subject = $intent === AccessTokenIntent::CONFIRM_EMAIL ? "Confirm your email" : "Recover your password";
 
     $this->emailSender->sendMail($user->email(), $subject, [
-      "token" => $token
+      "token" => $token->getToken()
     ]);
   }
 }
