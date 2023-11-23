@@ -13,7 +13,7 @@ use App\Core\Domain\Entities\User\CPF;
 use App\Core\Domain\Entities\User\User;
 use App\Core\Domain\Entities\User\UserRepository;
 use App\Core\Domain\Exceptions\EntityNotFoundException;
-use App\Core\Domain\Traits\EmailTokenSenderTrait;
+use App\Core\Domain\Traits\EmailAccessTokenSenderTrait;
 
 class UpdateUserUseCase extends BaseUseCase {
   public function __construct(
@@ -23,7 +23,7 @@ class UpdateUserUseCase extends BaseUseCase {
     private User $loggedUser
   ) {}
 
-  use EmailTokenSenderTrait;
+  use EmailAccessTokenSenderTrait;
 
   public function execute(UpdateUserInputDTO $input): void {
     $this->checkSameUser($this->loggedUser, $input->id);
@@ -39,7 +39,7 @@ class UpdateUserUseCase extends BaseUseCase {
 
     $this->userRepository->update($user);
 
-    if($emailHasChanged) $this->handleTokenSending($user, AccessTokenIntent::CONFIRM_EMAIL);
+    if($emailHasChanged) $this->handleAccessTokenSending($user, AccessTokenIntent::CONFIRM_EMAIL);
   }
 
   private function validateUniqueness(UpdateUserInputDTO $input): void {

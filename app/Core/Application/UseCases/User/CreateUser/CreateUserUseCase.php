@@ -15,7 +15,7 @@ use App\Core\Domain\Entities\User\CPF;
 use App\Core\Domain\Entities\User\Role;
 use App\Core\Domain\Entities\User\User;
 use App\Core\Domain\Entities\User\UserRepository;
-use App\Core\Domain\Traits\EmailTokenSenderTrait;
+use App\Core\Domain\Traits\EmailAccessTokenSenderTrait;
 
 class CreateUserUseCase extends BaseUseCase {
   public function __construct(
@@ -25,7 +25,7 @@ class CreateUserUseCase extends BaseUseCase {
     private EmailSender $emailSender
   ) {}
 
-  use EmailTokenSenderTrait;
+  use EmailAccessTokenSenderTrait;
 
   public function execute(CreateUserInputDTO $input): void {
     $this->validateUniqueness($input);
@@ -49,7 +49,7 @@ class CreateUserUseCase extends BaseUseCase {
 
     $userFromDB = $this->userRepository->create($user, true);
 
-    $this->handleTokenSending($userFromDB, AccessTokenIntent::CONFIRM_EMAIL);
+    $this->handleAccessTokenSending($userFromDB, AccessTokenIntent::CONFIRM_EMAIL);
   }
 
   private function validateUniqueness(CreateUserInputDTO $input): void {
