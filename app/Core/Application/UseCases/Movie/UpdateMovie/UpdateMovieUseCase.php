@@ -35,7 +35,7 @@ class UpdateMovieUseCase extends BaseUseCase {
 
     if($input->cover) $movie->changeCover($input->cover->upload());
 
-    if($input->isPublic) $movie->changeVisibility($input->isPublic);
+    if($input->isPublic !== null) $movie->changeVisibility($input->isPublic);
 
     if($input->releaseDate) $movie->changeReleaseDate($input->releaseDate);
   }
