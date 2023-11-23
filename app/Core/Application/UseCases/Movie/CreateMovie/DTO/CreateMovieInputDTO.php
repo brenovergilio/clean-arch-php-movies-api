@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\Application\UseCases\Movie\DTO;
+namespace App\Core\Application\UseCases\Movie\CreateMovie\DTO;
 use App\Core\Application\Interfaces\UploadableFile;
 use App\Core\Domain\Entities\Movie\MovieGenre;
 use DateTime;

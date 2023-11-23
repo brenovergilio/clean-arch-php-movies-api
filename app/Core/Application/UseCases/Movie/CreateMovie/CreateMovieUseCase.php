@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Core\Application\UseCases\Movie;
+namespace App\Core\Application\UseCases\Movie\CreateMovie;
 use App\Core\Application\UseCases\BaseUseCase;
-use App\Core\Application\UseCases\Movie\DTO\CreateMovieInputDTO;
+use App\Core\Application\UseCases\Movie\CreateMovie\DTO\CreateMovieInputDTO;
 use App\Core\Domain\Entities\Movie\Movie;
 use App\Core\Domain\Entities\Movie\MovieRepository;
 use App\Core\Domain\Entities\User\User;

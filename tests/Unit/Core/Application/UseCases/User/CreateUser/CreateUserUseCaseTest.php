@@ -79,14 +79,22 @@ it("should call upload() method on UploadableFile, when photo is provided", func
 });
 
 it("should execute flow successfully", function() {
-  $user = new \App\Core\Domain\Entities\User\User("id", "Name", "146.290.370-39", "valid@mail.com", "password", \App\Core\Domain\Entities\User\Role::CLIENT, 'photo', true);
+  $createdUser = new \App\Core\Domain\Entities\User\User('id', $this->inputDto->name, $this->inputDto->cpf, $this->inputDto->email, $this->inputDto->password, \App\Core\Domain\Entities\User\Role::CLIENT, $this->inputDto->photo, false);
 
   $this->userRepositoryMock->shouldReceive('findByEmail')->once()->andReturn(null);
   $this->userRepositoryMock->shouldReceive('findByCPF')->once()->andReturn(null);
-  $this->userRepositoryMock->shouldReceive('create')->once()->andReturn($user);
   $this->hashGeneratorMock->shouldReceive('generate')->once()->andReturn('hashedPassword');
   $this->accessTokenRepositoryMock->shouldReceive('find')->once()->andReturn(null);
   $this->emailSenderMock->shouldReceive('sendMail')->once();
+  $this->userRepositoryMock->shouldReceive('create')->with(Mockery::on(function ($argument) use ($createdUser) {
+    return $argument->name() === $createdUser->name() &&
+           $argument->cpf() === $createdUser->cpf() &&
+           $argument->email() === $createdUser->email() &&
+           $argument->password() === "hashedPassword" &&
+           $argument->isEmailConfirmed() === false &&
+           $argument->isAdmin() === false &&
+           $argument->photo() === $createdUser->photo();
+  }), true)->once()->andReturn($createdUser);
  
   $this->sut->execute($this->inputDto);
 });
