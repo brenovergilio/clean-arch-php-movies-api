@@ -43,7 +43,7 @@ class MovieModel extends Model
             $this->title,
             $this->synopsis,
             $this->director_name,
-            $this->mapGenreToDomain(),
+            MovieModel::mapGenreToDomain($this->genre),
             $this->cover,
             $this->is_public,
             $this->release_date,
@@ -51,8 +51,8 @@ class MovieModel extends Model
         );
     }
 
-    private function mapGenreToDomain(): MovieGenre {
-        switch($this->genre) {
+    public static function mapGenreToDomain(string $genre): MovieGenre {
+        switch($genre) {
             case 'horror':
                 return MovieGenre::HORROR;
             case 'drama':
@@ -65,6 +65,23 @@ class MovieModel extends Model
                 return MovieGenre::COMEDY;
             default:
                 return MovieGenre::FANTASY;
+        }
+    }
+
+    public static function mapGenreToModel(MovieGenre $genre): string {
+        switch($genre) {
+            case MovieGenre::HORROR:
+                return 'horror';
+            case MovieGenre::DRAMA:
+                return 'drama';
+            case MovieGenre::ACTION:
+                return 'action';
+            case MovieGenre::ROMANCE:
+                return 'romance';
+            case MovieGenre::COMEDY:
+                return 'comedy';
+            default:
+                return 'fantasy';
         }
     }
 }

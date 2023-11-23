@@ -40,7 +40,7 @@ class AccessTokenModel extends Model
 
     public function mapToDomain(): AccessToken {
         return new AccessToken(
-            $this->mapIntentToDomain(),
+            AccessTokenModel::mapIntentToDomain($this->intent),
             $this->user_id,
             $this->time_to_leave,
             $this->created_at,
@@ -48,7 +48,11 @@ class AccessTokenModel extends Model
         );
     }
 
-    private function mapIntentToDomain(): AccessTokenIntent {
-        return $this->intent === 'confirm-email' ? AccessTokenIntent::CONFIRM_EMAIL : AccessTokenIntent::RECOVER_PASSWORD;
+    public static function mapIntentToDomain(string $intent): AccessTokenIntent {
+        return $intent === 'confirm-email' ? AccessTokenIntent::CONFIRM_EMAIL : AccessTokenIntent::RECOVER_PASSWORD;
+    }
+
+    public static function mapIntentToModel(AccessTokenIntent $intent): string {
+        return $intent === AccessTokenIntent::CONFIRM_EMAIL ? 'confirm-email' : 'recover-password';
     }
 }

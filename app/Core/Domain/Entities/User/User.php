@@ -84,4 +84,8 @@ class User {
   public function isAdmin(): bool {
     return $this->role == Role::ADMIN;
   }
+
+  public function role(): Role {
+    return $this->role;
+  }
 }

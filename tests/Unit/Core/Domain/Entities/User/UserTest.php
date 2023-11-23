@@ -13,6 +13,7 @@ it("should return the right values when using getters", function () {
   expect($this->user->email())->toBe("valid@mail.com");
   expect($this->user->password())->toBe("hashedPassword");
   expect($this->user->photo())->toBe("pathToPhoto");
+  expect($this->user->role())->toBe(Role::ADMIN);
 });
 
 it("should return true when calling isAdmin()", function() {

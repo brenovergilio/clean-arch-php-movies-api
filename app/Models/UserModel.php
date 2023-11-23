@@ -58,13 +58,27 @@ class UserModel extends Authenticatable
             $this->cpf,
             $this->email,
             $this->password,
-            $this->mapRoleToDomain(),
+            UserModel::mapRoleToDomain($this->role),
             $this->photo,
             $this->email_confirmed
         );
     }
 
-    private function mapRoleToDomain(): Role {
-        return $this->role === 'admin' ? Role::ADMIN : Role::CLIENT;
+    public static function mapRoleToDomain(string $role): Role {
+        return $role === 'admin' ? Role::ADMIN : Role::CLIENT;
+    }
+
+    public function mergeDomain(User $user): void {
+        $this->name = $user->name();
+        $this->cpf = $user->cpf();
+        $this->email = $user->email();
+        $this->password = $user->password();
+        $this->role = UserModel::mapRoleToModel($user->role());
+        $this->photo = $user->photo();
+        $this->email_confirmed = $user->isEmailConfirmed();
+    }
+
+    public static function mapRoleToModel(Role $role): string {
+        return $role === Role::ADMIN ? 'admin' : 'client';
     }
 }

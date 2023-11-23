@@ -7,5 +7,5 @@ interface UserRepository {
   public function update(User $user, bool $returning = false): ?User;
   public function findByID(string|int $id): ?User;
   public function findByEmail(string $email): ?User;
-  public function findByCPF(string $email): ?User;
+  public function findByCPF(string $cpf): ?User;
 }
