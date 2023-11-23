@@ -3,15 +3,18 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Core\Domain\Entities\User\Role;
+use App\Core\Domain\Entities\User\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class UserModel extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    protected $table = "users";
     /**
      * The attributes that are mass assignable.
      *
@@ -21,6 +24,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'cpf',
+        'email_verified_at',
+        'role',
+        'photo',
+        'email_confirmed'
     ];
 
     /**
@@ -42,4 +50,21 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function mapToDomain(): User {
+        return new User(
+            $this->id,
+            $this->name,
+            $this->cpf,
+            $this->email,
+            $this->password,
+            $this->mapRoleToDomain(),
+            $this->photo,
+            $this->email_confirmed
+        );
+    }
+
+    private function mapRoleToDomain(): Role {
+        return $this->role === 'admin' ? Role::ADMIN : Role::CLIENT;
+    }
 }

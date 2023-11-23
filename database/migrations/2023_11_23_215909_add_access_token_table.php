@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('access_tokens', function (Blueprint $table) {
-            $table->id();
-            $table->string('token', 6);
+            $table->string('token', 6)->primary();
             $table->integer('time_to_leave');
             $table->unsignedBigInteger('user_id');
             $table->enum('intent', ['confirm-email', 'recover-password']);
