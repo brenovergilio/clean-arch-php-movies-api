@@ -1,9 +1,10 @@
 <?php
 use App\Infra\Handlers\BcryptHandler;
+use Illuminate\Support\Facades\Hash;
 
 beforeEach(function() {
   $this->sut = new BcryptHandler();
-  $this->hashedValue = '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi';
+  $this->hashedValue = Hash::make('password');
 });
 
 it('should return false because string does not match hashed value', function() {
