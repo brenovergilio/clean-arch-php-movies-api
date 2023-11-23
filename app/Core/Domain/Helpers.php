@@ -18,4 +18,5 @@ class Helpers {
   }
 
   const ONE_HOUR_IN_SECONDS = 60 * 60;
+  const ONE_WEEK_IN_SECONDS = 60 * 60 * 24 * 7;
 }
