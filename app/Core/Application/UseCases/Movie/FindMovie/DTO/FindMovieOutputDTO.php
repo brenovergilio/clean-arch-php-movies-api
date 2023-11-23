@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\Application\UseCases\Movie\FindMovie;
+namespace App\Core\Application\UseCases\Movie\FindMovie\DTO;
 use App\Core\Domain\Entities\Movie\MovieGenre;
 use DateTime;
 
