@@ -4,12 +4,16 @@ use App\Core\Application\Interfaces\HashGenerator;
 use App\Core\Application\UseCases\User\ChangePassword\ChangePasswordUseCase;
 use App\Core\Application\UseCases\User\ChangePassword\DTO\ChangePasswordInputDTO;
 use App\Core\Domain\Entities\User\UserRepository;
+use App\Models\UserModel;
 
 beforeEach(function() {
   $this->userRepositoryMock = Mockery::mock(UserRepository::class);
   $this->hashGeneratorMock = Mockery::mock(HashGenerator::class);
   $this->hashComparerMock = Mockery::mock(HashComparer::class);
-  $this->loggedUser = new \App\Core\Domain\Entities\User\User("id", "name", "146.290.370-39", "valid@mail.com", "password", \App\Core\Domain\Entities\User\Role::CLIENT, 'photo', true);
+  $this->loggedUser = UserModel::factory()->client()->makeOne([
+    "id" => 1,
+    "password" => "password"
+  ])->mapToDomain();
 
   $this->inputDto = new ChangePasswordInputDTO(
     $this->loggedUser->id(),
@@ -25,6 +29,11 @@ beforeEach(function() {
     $this->loggedUser
   );
 });
+
+afterEach(function() {
+  Mockery::close();
+});
+
 
 it('should throw an InsufficientPermissionsException because logged user ID does not match target user ID', function() {
   $this->inputDto->id = "anotherId";

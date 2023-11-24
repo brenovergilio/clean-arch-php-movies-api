@@ -6,6 +6,7 @@ use App\Core\Application\UseCases\User\CreateUser\CreateUserUseCase;
 use App\Core\Application\UseCases\User\CreateUser\DTO\CreateUserInputDTO;
 use App\Core\Domain\Entities\AccessToken\AccessTokenRepository;
 use App\Core\Domain\Entities\User\UserRepository;
+use App\Models\UserModel;
 
 beforeEach(function() {
   $this->userRepositoryMock = Mockery::mock(UserRepository::class);
@@ -16,7 +17,7 @@ beforeEach(function() {
   $this->inputDto = new CreateUserInputDTO(
     'Name',
     'valid@mail.com',
-    '146.290.370-39',
+    '14629037039',
     'password',
     'password',
     null
@@ -30,8 +31,13 @@ beforeEach(function() {
   );
 });
 
+afterEach(function() {
+  Mockery::close();
+});
+
+
 it("should throw a DuplicatedUniqueFieldException because there is a user with the same email", function() {
-  $existingUser = new \App\Core\Domain\Entities\User\User("id", "name", "146.290.370-39", "valid@mail.com", "password", \App\Core\Domain\Entities\User\Role::CLIENT, 'photo', true);
+  $existingUser = UserModel::factory()->client()->makeOne()->mapToDomain();
   $this->userRepositoryMock->shouldReceive('findByEmail')->andReturn($existingUser);
 
   expect(function() {
@@ -40,7 +46,7 @@ it("should throw a DuplicatedUniqueFieldException because there is a user with t
 });
 
 it("should throw a DuplicatedUniqueFieldException because there is a user with the same CPF", function() {
-  $existingUser = new \App\Core\Domain\Entities\User\User("id", "name", "146.290.370-39", "valid@mail.com", "password", \App\Core\Domain\Entities\User\Role::CLIENT, 'photo', true);
+  $existingUser = UserModel::factory()->client()->makeOne()->mapToDomain();
   $this->userRepositoryMock->shouldReceive('findByEmail')->andReturn(null);
   $this->userRepositoryMock->shouldReceive('findByCPF')->andReturn($existingUser);
 
@@ -61,7 +67,9 @@ it("should throw a PasswordAndConfirmationMismatchException because password and
 });
 
 it("should call upload() method on UploadableFile, when photo is provided", function() {
-  $user = new \App\Core\Domain\Entities\User\User("id", "Name", "146.290.370-39", "valid@mail.com", "password", \App\Core\Domain\Entities\User\Role::CLIENT, 'photo', true);
+  $user = UserModel::factory()->client()->makeOne([
+    "id" => 1
+  ])->mapToDomain();
 
   $this->userRepositoryMock->shouldReceive('findByEmail')->andReturn(null);
   $this->userRepositoryMock->shouldReceive('findByCPF')->andReturn(null);
@@ -79,7 +87,12 @@ it("should call upload() method on UploadableFile, when photo is provided", func
 });
 
 it("should execute flow successfully", function() {
-  $createdUser = new \App\Core\Domain\Entities\User\User('id', $this->inputDto->name, $this->inputDto->cpf, $this->inputDto->email, $this->inputDto->password, \App\Core\Domain\Entities\User\Role::CLIENT, $this->inputDto->photo, false);
+  $createdUser = UserModel::factory()->client()->unverified()->makeOne([
+    "id" => 1,
+    "name" => $this->inputDto->name,
+    "email" => $this->inputDto->email,
+    "cpf" => $this->inputDto->cpf
+  ])->mapToDomain();
 
   $this->userRepositoryMock->shouldReceive('findByEmail')->once()->andReturn(null);
   $this->userRepositoryMock->shouldReceive('findByCPF')->once()->andReturn(null);
@@ -87,6 +100,7 @@ it("should execute flow successfully", function() {
   $this->accessTokenRepositoryMock->shouldReceive('find')->once()->andReturn(null);
   $this->emailSenderMock->shouldReceive('sendMail')->once();
   $this->userRepositoryMock->shouldReceive('create')->with(Mockery::on(function ($argument) use ($createdUser) {
+
     return $argument->name() === $createdUser->name() &&
            $argument->cpf() === $createdUser->cpf() &&
            $argument->email() === $createdUser->email() &&

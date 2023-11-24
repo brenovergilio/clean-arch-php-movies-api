@@ -34,7 +34,7 @@ class MovieModel extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'release_date' => 'datetime'
+        'release_date' => 'date'
     ];
 
     public function mapToDomain(): Movie {

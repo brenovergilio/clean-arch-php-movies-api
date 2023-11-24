@@ -7,17 +7,20 @@ use App\Core\Domain\Entities\AccessToken\AccessTokenRepository;
 use App\Core\Domain\Entities\User\Role;
 use App\Core\Domain\Entities\User\User;
 use App\Core\Domain\Entities\User\UserRepository;
+use App\Models\UserModel;
 
 beforeEach(function() {
   $this->userRepositoryMock = Mockery::mock(UserRepository::class);
   $this->accessTokenRepositoryMock = Mockery::mock(AccessTokenRepository::class);
   $this->emailSenderMock = Mockery::mock(EmailSender::class);
-  $this->loggedUser = new User("id", "name", "146.290.370-39", "valid@mail.com", "password", \App\Core\Domain\Entities\User\Role::CLIENT, 'photo', true);
+  $this->loggedUser = UserModel::factory()->client()->makeOne([
+    "id" => 1
+  ])->mapToDomain();
   $this->inputDto = new UpdateUserInputDTO(
     $this->loggedUser->id(),
     'Another Name',
     'anotherValid@mail.com',
-    '511.154.710-07',
+    '51115471007',
     null
   );
 
@@ -29,6 +32,11 @@ beforeEach(function() {
   );
 });
 
+afterEach(function() {
+  Mockery::close();
+});
+
+
 it('should throw an InsufficientPermissionsException because logged user ID is different from input DTO ID', function() {
   $this->inputDto->id = "anotherId";
 
@@ -38,7 +46,9 @@ it('should throw an InsufficientPermissionsException because logged user ID is d
 });
 
 it('should throw an DuplicatedUniqueFieldException because there is another user with the email provided', function() {
-  $existingUser = new User("anotherId", "name", "146.290.370-39", "valid@mail.com", "password", \App\Core\Domain\Entities\User\Role::CLIENT, 'photo', true);
+  $existingUser = UserModel::factory()->client()->makeOne([
+    "id" => 2
+  ])->mapToDomain();
   $this->userRepositoryMock->shouldReceive('findByID')->andReturn($this->loggedUser);  
   $this->userRepositoryMock->shouldReceive('findByEmail')->andReturn($existingUser);
 
@@ -48,8 +58,9 @@ it('should throw an DuplicatedUniqueFieldException because there is another user
 });
 
 it('should throw an DuplicatedUniqueFieldException because there is another user with the CPF provided', function() {
-  $existingUser = new User("anotherId", "name", "146.290.370-39", "valid@mail.com", "password", \App\Core\Domain\Entities\User\Role::CLIENT, 'photo', true);
-  $this->userRepositoryMock->shouldReceive('findByID')->andReturn($this->loggedUser);  
+  $existingUser = UserModel::factory()->client()->makeOne([
+    "id" => 2
+  ])->mapToDomain();  $this->userRepositoryMock->shouldReceive('findByID')->andReturn($this->loggedUser);  
   $this->userRepositoryMock->shouldReceive('findByEmail')->andReturn(null);
   $this->userRepositoryMock->shouldReceive('findByCPF')->andReturn($existingUser);
 
@@ -100,7 +111,16 @@ it('should call upload() method if a photo is provided', function() {
 
 it('should call update() with the right values', function() {
   $updatedUser = new User($this->loggedUser->id(), $this->inputDto->name, $this->inputDto->cpf, $this->inputDto->email, $this->loggedUser->password(), Role::CLIENT, $this->loggedUser->photo(), true);
-  
+  $updatedUser = UserModel::factory()->client()->makeOne([
+    "id" => $this->loggedUser->id(),
+    "name" => $this->inputDto->name,
+    "cpf" => $this->inputDto->cpf,
+    "email" => $this->inputDto->email,
+    "password" => $this->loggedUser->password(),
+    "photo" =>  $this->loggedUser->photo(), 
+    "email_confirmed" => true
+  ])->mapToDomain();
+
   $this->userRepositoryMock->shouldReceive('findByID')->andReturn($this->loggedUser);  
   $this->userRepositoryMock->shouldReceive('findByEmail')->andReturn(null);
   $this->userRepositoryMock->shouldReceive('findByCPF')->andReturn(null);

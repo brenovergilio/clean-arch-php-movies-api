@@ -21,12 +21,13 @@ class MovieModelFactory extends Factory
     {
         return [
             'title' => fake()->word(),
-            'synopsis' => fake()->words(),
+            'synopsis' => fake()->words(10, true),
             'director_name' => fake()->word(),
             'genre' => MovieModel::mapGenreToModel(MovieGenre::ACTION),
             'cover' => fake()->filePath(),
             'is_public' => true,
-            'release_date' => fake()->dateTime()
+            'release_date' => fake()->date(),
+            'created_at' => fake()->dateTime()
         ];
     }
 

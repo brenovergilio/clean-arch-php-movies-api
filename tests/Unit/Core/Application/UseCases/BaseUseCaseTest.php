@@ -1,6 +1,6 @@
 <?php
 use App\Core\Application\UseCases\BaseUseCase;
-use App\Core\Domain\Entities\User\Role;
+use App\Models\UserModel;
 
 class BaseUseCaseTest extends BaseUseCase {}
 
@@ -9,7 +9,7 @@ beforeEach(function() {
 });
 
 it("should throw an InsufficientPermissionsException when calling checkAdmin() because user role is client", function() {
-  $user = new \App\Core\Domain\Entities\User\User("id", "name", "146.290.370-39", "valid@mail.com", "password", \App\Core\Domain\Entities\User\Role::CLIENT, 'photo', true);
+  $user = UserModel::factory()->client()->makeOne()->mapToDomain();
 
   expect(function() use ($user) {
     $this->sut->checkAdmin($user);
@@ -17,7 +17,9 @@ it("should throw an InsufficientPermissionsException when calling checkAdmin() b
 });
 
 it("should throw an InsufficientPermissionsException when calling checkSameUser() because user IDs differ", function() {
-  $user = new \App\Core\Domain\Entities\User\User("id", "name", "146.290.370-39", "valid@mail.com", "password", \App\Core\Domain\Entities\User\Role::CLIENT, 'photo', true);
+  $user = UserModel::factory()->makeOne([
+    "id" => 1
+  ])->mapToDomain();
   
   expect(function() use ($user){
     $this->sut->checkSameUser($user, "anotherId");
@@ -25,7 +27,7 @@ it("should throw an InsufficientPermissionsException when calling checkSameUser(
 });
 
 it("should throw an InsufficientPermissionsException when calling checkEmailConfirmed() because user email is not confirmed", function() {
-  $user = new \App\Core\Domain\Entities\User\User("id", "name", "146.290.370-39", "valid@mail.com", "password", \App\Core\Domain\Entities\User\Role::CLIENT, 'photo', false);
+  $user = UserModel::factory()->unverified()->makeOne()->mapToDomain();
   
   expect(function() use ($user){
     $this->sut->checkEmailConfirmed($user);

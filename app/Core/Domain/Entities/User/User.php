@@ -11,7 +11,7 @@ class User {
   public function __construct(
     private string|int|null $id,
     private string $name,
-    string $cpf,
+    ?string $cpf,
     string $email,
     private string $password,
     private Role $role,
@@ -42,12 +42,14 @@ class User {
     return $this->password;
   }
 
-  public function cpf(): string {
+  public function cpf(): ?string {
+    if(!isset($this->cpf)) return null;
+    
     return $this->cpf->getValue();
   }
 
   public function changeName(string $name): void {
-    if($name == $this->name) return;
+    if($name === $this->name) return;
 
     $this->name = $name;
   }
@@ -61,7 +63,7 @@ class User {
   }
 
   public function changeEmail(string $email): void {
-    if($email == $this->email()) return;
+    if($email === $this->email()) return;
 
     $this->email = new Email($email);
     $this->emailConfirmed = false;

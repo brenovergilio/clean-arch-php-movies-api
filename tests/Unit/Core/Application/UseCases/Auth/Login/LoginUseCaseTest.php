@@ -4,7 +4,6 @@ use App\Core\Application\Interfaces\TokenGenerator;
 use App\Core\Application\UseCases\Auth\Login\DTO\LoginInputDTO;
 use App\Core\Application\UseCases\Auth\Login\LoginUseCase;
 use App\Core\Domain\Entities\User\UserRepository;
-use App\Core\Domain\Entities\User\User;
 use App\Models\UserModel;
 
 beforeEach(function() {
@@ -12,7 +11,8 @@ beforeEach(function() {
   $this->hashComparerMock = Mockery::mock(HashComparer::class);
   $this->tokenGeneratorMock = Mockery::mock(TokenGenerator::class);
 
-  $this->user = UserModel::factory()->client()->make([
+  $this->user = UserModel::factory()->client()->makeOne([
+    "id" => 1,
     "name" => "name",
     "cpf" => "14629037039",
     "email" => "valid@mail.com",
@@ -31,6 +31,11 @@ beforeEach(function() {
     $this->tokenGeneratorMock
   );
 });
+
+afterEach(function() {
+  Mockery::close();
+});
+
 
 it('should throw an InvalidCredentialsException because user was not found', function() {
   $this->userRepositoryMock->shouldReceive('findByEmail')->andReturn(null);
@@ -60,7 +65,7 @@ it("should call generate() with right values", function() {
            $argument->email() === $this->user->email() &&
            $argument->password() === $this->user->password() &&
            $argument->photo() === $this->user->photo();
-  }), [$this->user->id()])->once();
+  }), ['id'])->once();
 
   $this->sut->execute($this->inputDto);
 });

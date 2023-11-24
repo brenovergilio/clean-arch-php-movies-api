@@ -1,7 +1,6 @@
 <?php
 use App\Core\Domain\Entities\Movie\Movie;
 use App\Core\Domain\Entities\Movie\MovieGenre;
-use DateTime;
 
 beforeEach(function() {
   $this->today = new DateTime();

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->enum('genre', ['horror', 'drama', 'action', 'romance', 'comedy', 'fantasy']);
             $table->string('cover')->nullable();
             $table->boolean('is_public')->default(true);
-            $table->datetime('release_date');
+            $table->date('release_date');
             $table->timestamps();
         });
     }

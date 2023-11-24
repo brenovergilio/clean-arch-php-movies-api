@@ -1,16 +1,19 @@
 <?php
 use App\Core\Application\UseCases\Movie\FindMovie\DTO\FindMovieInputDTO;
 use App\Core\Application\UseCases\Movie\FindMovie\FindMovieUseCase;
-use App\Core\Domain\Entities\Movie\Movie;
-use App\Core\Domain\Entities\Movie\MovieGenre;
 use App\Core\Domain\Entities\Movie\MovieRepository;
-use DateTime;
+use App\Models\MovieModel;
 
 beforeEach(function() {
   $this->movieRepositoryMock = Mockery::mock(MovieRepository::class);
   $this->inputDto = new FindMovieInputDTO('id');
   $this->sut = new FindMovieUseCase($this->movieRepositoryMock);
 });
+
+afterEach(function() {
+  Mockery::close();
+});
+
 
 it("should throw an EntityNotFoundException because movie does not exist", function() {
   $this->movieRepositoryMock->shouldReceive('findByID')->andReturn(null);
@@ -21,19 +24,12 @@ it("should throw an EntityNotFoundException because movie does not exist", funct
 });
 
 it("should return the movie", function() {
-  $movie = new Movie(
-    'id',
-    'title',
-    'synopsis',
-    'directorName',
-    MovieGenre::ACTION,
-    null,
-    true,
-    new DateTime(),
-    new DateTime()
-  );
+  $movie = MovieModel::factory()->makeOne([
+    "id" => 1
+  ])->mapToDomain();
   $this->movieRepositoryMock->shouldReceive('findByID')->andReturn($movie);
 
+  $this->inputDto->id = $movie->id();
   $result = $this->sut->execute($this->inputDto);
   
   expect($result->id)->toBe($movie->id());

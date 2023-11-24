@@ -2,13 +2,11 @@
 
 namespace App\Core\Application\UseCases\Auth\Login;
 use App\Core\Application\Exceptions\InvalidCredentialsException;
-use App\Core\Application\Exceptions\UnauthorizedException;
 use App\Core\Application\Interfaces\HashComparer;
 use App\Core\Application\Interfaces\TokenGenerator;
 use App\Core\Application\UseCases\Auth\Login\DTO\LoginInputDTO;
 use App\Core\Application\UseCases\Auth\Login\DTO\LoginOutputDTO;
 use App\Core\Application\UseCases\BaseUseCase;
-use App\Core\Domain\Entities\User\User;
 use App\Core\Domain\Entities\User\UserRepository;
 
 class LoginUseCase extends BaseUseCase {

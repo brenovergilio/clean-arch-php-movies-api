@@ -1,10 +1,8 @@
 <?php
-use App\Core\Application\Interfaces\UploadableFile;
 use App\Core\Application\UseCases\User\FindUser\DTO\FindUserInputDTO;
 use App\Core\Application\UseCases\User\FindUser\FindUserUseCase;
-use App\Core\Domain\Entities\User\Role;
-use App\Core\Domain\Entities\User\User;
 use App\Core\Domain\Entities\User\UserRepository;
+use App\Models\UserModel;
 
 beforeEach(function() {
   $this->userRepositoryMock = Mockery::mock(UserRepository::class);
@@ -17,6 +15,11 @@ beforeEach(function() {
   );
 });
 
+afterEach(function() {
+  Mockery::close();
+});
+
+
 it('should throw an EntityNotFoundException user was not found', function() {
   $this->userRepositoryMock->shouldReceive('findByID')->andReturn(null);  
 
@@ -26,7 +29,10 @@ it('should throw an EntityNotFoundException user was not found', function() {
 });
 
 it('should return the DTO representing the found user', function() {
-  $user = new User("id", "name", "146.290.370-39", "valid@mail.com", "password", \App\Core\Domain\Entities\User\Role::CLIENT, 'photo', true);
+  $user = UserModel::factory()->client()->makeOne([
+    "id" => 1,
+    "cpf" => "14629037039"
+  ])->mapToDomain();
   $this->userRepositoryMock->shouldReceive('findByID')->andReturn($user);  
 
   $result = $this->sut->execute($this->inputDto);
