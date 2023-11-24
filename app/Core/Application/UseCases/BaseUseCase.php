@@ -2,7 +2,6 @@
 
 namespace App\Core\Application\UseCases;
 use App\Core\Application\Exceptions\InsufficientPermissionsException;
-use App\Core\Domain\Entities\User\Role;
 use App\Core\Domain\Entities\User\User;
 
 abstract class BaseUseCase {

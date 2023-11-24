@@ -1,10 +1,11 @@
 <?php
 
 namespace App\Presentation\Http\Interfaces;
+use App\Presentation\Http\HttpStatusCodes;
 
-class HttpRequest {
+class HttpResponse {
   public function __construct(
     public mixed $body,
-    public mixed $queryParams
+    public HttpStatusCodes $statusCode
   ) {}
 }
