@@ -23,7 +23,8 @@ class EloquentUserRepository implements UserRepository {
     $eloquentUser->save();
 
     if($returning) {
-      return $user;
+      $eloquentUser->refresh();
+      return $eloquentUser->mapToDomain();
     }
   }
 
