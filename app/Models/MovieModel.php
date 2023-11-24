@@ -68,6 +68,16 @@ class MovieModel extends Model
         }
     }
 
+    public function mergeDomain(Movie $movie): void {
+        $this->title = $movie->title();
+        $this->synopsis = $movie->synopsis();
+        $this->director_name = $movie->directorName();
+        $this->genre = MovieModel::mapGenreToModel($movie->genre());
+        $this->cover = $movie->cover();
+        $this->is_public = $movie->isPublic();
+        $this->release_date = $movie->releaseDate();
+    }
+
     public static function mapGenreToModel(MovieGenre $genre): string {
         switch($genre) {
             case MovieGenre::HORROR:
