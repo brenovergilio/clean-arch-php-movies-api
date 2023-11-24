@@ -1,5 +1,6 @@
 <?php
 
+use App\Core\Application\Interfaces\Folders;
 use App\Core\Application\UseCases\Movie\UpdateMovie\DTO\UpdateMovieInputDTO;
 use App\Core\Application\UseCases\Movie\UpdateMovie\UpdateMovieUseCase;
 use App\Core\Domain\Entities\Movie\MovieGenre;
@@ -60,9 +61,9 @@ it("should throw an EntityNotFoundException because movie does not exist", funct
   })->toThrow("Entity Movie not found");
 });
 
-it("should call upload() method if a cover file is provided", function() {
+it("should call upload() method with right folder value if a cover file is provided", function() {
   $uploadableFile = Mockery::mock(UploadableFile::class);
-  $uploadableFile->shouldReceive('upload')->once();
+  $uploadableFile->shouldReceive('upload')->with(Folders::COVERS)->once();
 
   $this->movieRepositoryMock->shouldReceive('findByID')->andReturn($this->movie);
   $this->movieRepositoryMock->shouldReceive('update');

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Core\Application\UseCases\Movie\UpdateMovie;
+use App\Core\Application\Interfaces\Folders;
 use App\Core\Application\UseCases\BaseUseCase;
 use App\Core\Application\UseCases\Movie\UpdateMovie\DTO\UpdateMovieInputDTO;
 use App\Core\Domain\Entities\Movie\Movie;
@@ -33,7 +34,7 @@ class UpdateMovieUseCase extends BaseUseCase {
 
     if($input->genre) $movie->changeGenre($input->genre);
 
-    if($input->cover) $movie->changeCover($input->cover->upload());
+    if($input->cover) $movie->changeCover($input->cover->upload(Folders::COVERS));
 
     if($input->isPublic !== null) $movie->changeVisibility($input->isPublic);
 

@@ -4,6 +4,7 @@ namespace App\Core\Application\UseCases\User\UpdateUser;
 
 use App\Core\Application\Exceptions\DuplicatedUniqueFieldException;
 use App\Core\Application\Interfaces\EmailSender;
+use App\Core\Application\Interfaces\Folders;
 use App\Core\Application\UseCases\BaseUseCase;
 use App\Core\Application\UseCases\User\UpdateUser\DTO\UpdateUserInputDTO;
 use App\Core\Domain\Entities\AccessToken\AccessTokenIntent;
@@ -58,6 +59,6 @@ class UpdateUserUseCase extends BaseUseCase {
 
     if($input->name) $user->changeName($input->name);
 
-    if($input->photo) $user->changePhoto($input->photo?->upload());
+    if($input->photo) $user->changePhoto($input->photo?->upload(Folders::USERS));
   }
 }

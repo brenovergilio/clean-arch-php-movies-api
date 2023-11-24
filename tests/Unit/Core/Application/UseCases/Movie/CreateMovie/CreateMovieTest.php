@@ -1,5 +1,6 @@
 <?php
 
+use App\Core\Application\Interfaces\Folders;
 use App\Core\Application\UseCases\Movie\CreateMovie\CreateMovieUseCase;
 use App\Core\Application\UseCases\Movie\CreateMovie\DTO\CreateMovieInputDTO;
 use App\Core\Domain\Entities\Movie\MovieGenre;
@@ -48,9 +49,9 @@ it("should throw an InsufficientPermissionsException because user is not an admi
   })->toThrow("Insufficient Permissions");
 });
 
-it("should call upload() method if a cover file is provided", function() {
+it("should call upload() method with right folder value if a cover file is provided", function() {
   $uploadableFile = Mockery::mock(UploadableFile::class);
-  $uploadableFile->shouldReceive('upload')->once();
+  $uploadableFile->shouldReceive('upload')->with(Folders::COVERS)->once();
   
   $this->movieRepositoryMock->shouldReceive('create');
 

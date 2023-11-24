@@ -1,5 +1,6 @@
 <?php
 use App\Core\Application\Interfaces\EmailSender;
+use App\Core\Application\Interfaces\Folders;
 use App\Core\Application\Interfaces\UploadableFile;
 use App\Core\Application\UseCases\User\UpdateUser\DTO\UpdateUserInputDTO;
 use App\Core\Application\UseCases\User\UpdateUser\UpdateUserUseCase;
@@ -93,7 +94,7 @@ it('should not throw a DuplicatedUniqueFieldException because the CPF provided b
   $this->sut->execute($this->inputDto);
 });
 
-it('should call upload() method if a photo is provided', function() {
+it('should call upload() method with right folder value if a photo is provided', function() {
   $this->userRepositoryMock->shouldReceive('findByID')->andReturn($this->loggedUser);  
   $this->userRepositoryMock->shouldReceive('findByEmail')->andReturn(null);
   $this->userRepositoryMock->shouldReceive('findByCPF')->andReturn(null);
@@ -101,7 +102,7 @@ it('should call upload() method if a photo is provided', function() {
   $this->emailSenderMock->shouldReceive('sendMail');
 
   $uploadableFile = Mockery::mock(UploadableFile::class);
-  $uploadableFile->shouldReceive('upload')->once();
+  $uploadableFile->shouldReceive('upload')->with(Folders::USERS)->once();
  
   $this->inputDto->photo = $uploadableFile;
   $this->userRepositoryMock->shouldReceive('update');

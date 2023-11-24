@@ -4,6 +4,7 @@ namespace App\Core\Application\UseCases\User\CreateUser;
 
 use App\Core\Application\Exceptions\DuplicatedUniqueFieldException;
 use App\Core\Application\Exceptions\PasswordAndConfirmationMismatchException;
+use App\Core\Application\Interfaces\Folders;
 use App\Core\Application\Interfaces\HashGenerator;
 use App\Core\Application\Interfaces\EmailSender;
 use App\Core\Application\UseCases\BaseUseCase;
@@ -32,7 +33,7 @@ class CreateUserUseCase extends BaseUseCase {
 
     if($input->password !== $input->passwordConfirmation) throw new PasswordAndConfirmationMismatchException;
 
-    $photoPath = $input->photo?->upload();
+    $photoPath = $input->photo?->upload(Folders::USERS);
 
     $hashedPassword = $this->hashGenerator->generate($input->password);
 

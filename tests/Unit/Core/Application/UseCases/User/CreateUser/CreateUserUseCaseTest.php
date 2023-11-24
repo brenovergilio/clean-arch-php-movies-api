@@ -1,5 +1,6 @@
 <?php
 use App\Core\Application\Interfaces\EmailSender;
+use App\Core\Application\Interfaces\Folders;
 use App\Core\Application\Interfaces\HashGenerator;
 use App\Core\Application\Interfaces\UploadableFile;
 use App\Core\Application\UseCases\User\CreateUser\CreateUserUseCase;
@@ -82,7 +83,7 @@ it("should throw a PasswordAndConfirmationMismatchException because password and
   })->toThrow("Password and confirmation are not equal");
 });
 
-it("should call upload() method on UploadableFile, when photo is provided", function() {
+it("should call upload() method on UploadableFile with right folder value, when photo is provided", function() {
   $user = UserModel::factory()->client()->makeOne([
     "id" => 1
   ])->mapToDomain();
@@ -95,7 +96,7 @@ it("should call upload() method on UploadableFile, when photo is provided", func
   $this->emailSenderMock->shouldReceive('sendMail');
 
   $uploadableFile = Mockery::mock(UploadableFile::class);
-  $uploadableFile->shouldReceive('upload')->once();
+  $uploadableFile->shouldReceive('upload')->with(Folders::USERS)->once();
  
   $this->inputDto->photo = $uploadableFile;
 

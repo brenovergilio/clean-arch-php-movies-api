@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Core\Application\UseCases\Movie\CreateMovie;
+use App\Core\Application\Interfaces\Folders;
 use App\Core\Application\UseCases\BaseUseCase;
 use App\Core\Application\UseCases\Movie\CreateMovie\DTO\CreateMovieInputDTO;
 use App\Core\Domain\Entities\Movie\Movie;
@@ -17,7 +18,7 @@ class CreateMovieUseCase extends BaseUseCase {
   public function execute(CreateMovieInputDTO $input): void {
     $this->checkAdmin($this->loggedUser);
 
-    $pathToCover = $input->cover?->upload();
+    $pathToCover = $input->cover?->upload(Folders::COVERS);
 
     $movie = new Movie(
       null,
