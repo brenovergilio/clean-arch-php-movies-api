@@ -17,11 +17,15 @@ class JWTHandler implements TokenGenerator, TokenDecoder {
     $this->secret = env("JWT_SECRET", "secret");
   }
 
-  public function generate($target, array $fieldsToTokenize, $expiration = null): string {
+  public function generate($target, array $fieldsToTokenize, ?int $expiration = null, $usingGetter = true): string {
     $filteredObject = [];
 
-    foreach($fieldsToTokenize as $field) { 
-      $filteredObject[$field] = $target->$field;
+    foreach($fieldsToTokenize as $field) {
+      if($usingGetter) {
+        $filteredObject[$field] = $target->$field();
+      } else {
+        $filteredObject[$field] = $target->$field;
+      }
     }
 
     $filteredObject['exp'] = isset($expiration) ? time () + $expiration : $this->defaultExpiration;

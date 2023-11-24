@@ -20,7 +20,8 @@ class LoginUseCase extends BaseUseCase {
     $user = $this->userRepository->findByEmail($input->email);
     if(!$user) throw new InvalidCredentialsException();
 
-    $passwordMatch = $this->hashComparer->compare($user->password(), $input->password);
+    $passwordMatch = $this->hashComparer->compare($input->password, $user->password());
+
     if(!$passwordMatch) throw new InvalidCredentialsException;
 
     $token = $this->tokenGenerator->generate($user, ['id']);
