@@ -26,7 +26,7 @@ it("should return movie when calling findByID because movie does exist", functio
 
 it("should delete a movie", function() {
   $movie = MovieModel::factory()->createOne();
-  expect(MovieModel::find($movie->id))->toBeTruthy();
+  expect(MovieModel::find($movie->id))->not->toBeNull();
 
   $this->sut->delete($movie->id);
   expect(MovieModel::find($movie->id))->toBeNull();
