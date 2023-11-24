@@ -106,7 +106,7 @@ it('should return 403 status code because use case thrown InsufficientPermission
   expect($result->body['error'])->toBe("Insufficient Permissions");
 });
 
-it('should return 204 status code in case of success', function() {
+it('should return 201 status code in case of success', function() {
   $body = [
     "title" => "title",
     "synopsis" => "synopsis",
@@ -121,6 +121,6 @@ it('should return 204 status code in case of success', function() {
   $httpRequest = new HttpRequest($body);
 
   $result = $this->sut->store($httpRequest);
-  expect($result->statusCode)->toBe(HttpStatusCodes::NO_CONTENT);
+  expect($result->statusCode)->toBe(HttpStatusCodes::CREATED);
   expect($result->body)->toBeNull();
 });

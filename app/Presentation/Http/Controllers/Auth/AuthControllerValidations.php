@@ -3,6 +3,8 @@
 namespace App\Presentation\Http\Controllers\Auth;
 use App\Presentation\Validations\RequiredFieldValidation;
 use App\Presentation\Validations\ValidationComposite;
+use App\Presentation\Validations\EmailValidation;
+use App\Presentation\Validations\Adapters\EmailValidatorAdapter;
 
 class AuthControllerValidations {
   public static function loginValidations(array $fields): ValidationComposite {
@@ -12,6 +14,8 @@ class AuthControllerValidations {
     foreach($requiredFields as $requiredField) {
       $validations[] = new RequiredFieldValidation($requiredField);
     }
+
+    $validations[] = new EmailValidation('email', new EmailValidatorAdapter());
 
     return new ValidationComposite($validations);
   }

@@ -1,8 +1,10 @@
 <?php
 
 namespace App\Presentation\Http\Controllers\Auth;
+use App\Core\Application\Exceptions\InvalidCredentialsException;
 use App\Core\Application\UseCases\Auth\Login\DTO\LoginInputDTO;
 use App\Core\Application\UseCases\Auth\Login\LoginUseCase;
+use App\Core\Domain\Exceptions\InvalidFieldException;
 use App\Core\Domain\Exceptions\MissingRequiredFieldException;
 use App\Presentation\Http\HttpRequest;
 use App\Presentation\Http\HttpResponse;
@@ -26,6 +28,10 @@ class LoginController {
       return new HttpResponse(["data" => $result], HttpStatusCodes::CREATED);
     } catch (MissingRequiredFieldException $exception) {
       return new HttpResponse(["error" => $exception->getMessage()], HttpStatusCodes::BAD_REQUEST);
+    } catch (InvalidFieldException $exception) {
+      return new HttpResponse(["error" => $exception->getMessage()], HttpStatusCodes::BAD_REQUEST);
+    } catch (InvalidCredentialsException $exception) {
+      return new HttpResponse(["error" => $exception->getMessage()], HttpStatusCodes::UNAUTHORIZED);
     }
   }
 }

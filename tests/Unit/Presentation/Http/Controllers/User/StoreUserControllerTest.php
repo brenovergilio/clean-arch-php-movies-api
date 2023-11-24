@@ -133,7 +133,7 @@ it('should return 409 status code because use case thrown DuplicatedUniqueFieldE
   expect($result->body['error'])->toBe("Field field is already in use");
 });
 
-it('should return 204 in case of success', function() {
+it('should return 201 in case of success', function() {
   $body = [
     "name" => "name",
     "email" => "email@mail.com",
@@ -144,6 +144,6 @@ it('should return 204 in case of success', function() {
   $this->createUserUseCaseMock->shouldReceive('execute')->once();
   
   $result = $this->sut->store($httpRequest);
-  expect($result->statusCode)->toBe(HttpStatusCodes::NO_CONTENT);
+  expect($result->statusCode)->toBe(HttpStatusCodes::CREATED);
   expect($result->body)->toBeNull();
 });
