@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Presentation\Http\Interfaces;
+namespace App\Presentation\Http;
 use App\Presentation\Http\HttpStatusCodes;
 
 class HttpResponse {

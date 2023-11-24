@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Presentation\Http\Interfaces;
+namespace App\Presentation\Http;
 
 class HttpRequest {
   public function __construct(
-    public mixed $body,
-    public mixed $queryParams
+    public array $body = [],
+    public array $queryParams = []
   ) {}
 }

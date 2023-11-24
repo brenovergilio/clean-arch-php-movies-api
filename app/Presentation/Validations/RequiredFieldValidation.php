@@ -9,7 +9,7 @@ class RequiredFieldValidation implements Validation {
   public function __construct(private string $fieldName) {}
 
   public function validate($input): ?Exception {
-    if(!$input[$this->fieldName]) return new MissingRequiredFieldException($this->fieldName);
+    if(!isset($input[$this->fieldName])) return new MissingRequiredFieldException($this->fieldName);
     return null;
   }
 }

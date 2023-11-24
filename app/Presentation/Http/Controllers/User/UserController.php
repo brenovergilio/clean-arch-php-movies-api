@@ -21,8 +21,8 @@ use App\Infra\Factories\UseCases\User\CreateUserUseCaseFactory;
 use App\Infra\Factories\UseCases\User\FindUserUseCaseFactory;
 use App\Infra\Factories\UseCases\User\UpdateUserUseCaseFactory;
 use App\Presentation\Http\HttpStatusCodes;
-use App\Presentation\Http\Interfaces\HttpRequest;
-use App\Presentation\Http\Interfaces\HttpResponse;
+use App\Presentation\Http\HttpRequest;
+use App\Presentation\Http\HttpResponse;
 
 class UserController {
   public function __construct(private User $loggedUser) {}
@@ -30,31 +30,31 @@ class UserController {
     try {
       $useCase = CreateUserUseCaseFactory::make();
 
-      $validationException = UserControllerValidations::createUserValidations(array_keys($request->body));
+      $validationException = UserControllerValidations::createUserValidations(array_keys($request->body))->validate($request->body);
 
       if($validationException) throw $validationException;
 
       $inputDto = new CreateUserInputDTO(
-        $request->body?->name,
-        $request->body?->email,
-        $request->body?->cpf,
-        $request->body?->password,
-        $request->body?->confirmationPassword,
-        $request->body?->photo
+        $request->body['name'],
+        $request->body['email'],
+        $request->body['cpf'] ?? null,
+        $request->body['password'],
+        $request->body['passwordConfirmation'],
+        $request->body['photo'] ?? null
       );
 
       $useCase->execute($inputDto);
       return new HttpResponse(null, HttpStatusCodes::NO_CONTENT);
     } catch (PasswordAndConfirmationMismatchException $exception) {
-      return new HttpResponse($exception->getMessage(), HttpStatusCodes::BAD_REQUEST);
+      return new HttpResponse(["error" => $exception->getMessage()], HttpStatusCodes::BAD_REQUEST);
     } catch (MissingRequiredFieldException $exception) {
-      return new HttpResponse($exception->getMessage(), HttpStatusCodes::BAD_REQUEST);
+      return new HttpResponse(["error" => $exception->getMessage()], HttpStatusCodes::BAD_REQUEST);
     } catch (WeakPasswordException $exception) {
-      return new HttpResponse($exception->getMessage(), HttpStatusCodes::BAD_REQUEST);
+      return new HttpResponse(["error" => $exception->getMessage()], HttpStatusCodes::BAD_REQUEST);
     } catch (InvalidFieldException $exception) {
-      return new HttpResponse($exception->getMessage(), HttpStatusCodes::BAD_REQUEST);
+      return new HttpResponse(["error" => $exception->getMessage()], HttpStatusCodes::BAD_REQUEST);
     } catch (DuplicatedUniqueFieldException $exception) {
-      return new HttpResponse($exception->getMessage(), HttpStatusCodes::CONFLICT);
+      return new HttpResponse(["error" => $exception->getMessage()], HttpStatusCodes::CONFLICT);
     }
   }
 
@@ -62,28 +62,28 @@ class UserController {
     try {
       $useCase = UpdateUserUseCaseFactory::make($this->loggedUser);
 
-      $validationException = UserControllerValidations::updateUserValidations(array_keys($request->body));
+      $validationException = UserControllerValidations::updateUserValidations(array_keys($request->body))->validate($request->body);
 
       if($validationException) throw $validationException;
 
       $inputDto = new UpdateUserInputDTO(
         $id,
-        $request->body?->name,
-        $request->body?->email,
-        $request->body?->cpf,
-        $request->body?->photo
+        $request->body['name'],
+        $request->body['email'],
+        $request->body['cpf'],
+        $request->body['photo']
       );
 
       $useCase->execute($inputDto);
       return new HttpResponse(null, HttpStatusCodes::NO_CONTENT);
     } catch (EntityNotFoundException $exception) {
-      return new HttpResponse($exception->getMessage(), HttpStatusCodes::NOT_FOUND);
+      return new HttpResponse(["error" => $exception->getMessage()], HttpStatusCodes::NOT_FOUND);
     } catch (InvalidFieldException $exception) {
-      return new HttpResponse($exception->getMessage(), HttpStatusCodes::BAD_REQUEST);
+      return new HttpResponse(["error" => $exception->getMessage()], HttpStatusCodes::BAD_REQUEST);
     } catch (DuplicatedUniqueFieldException $exception) {
-      return new HttpResponse($exception->getMessage(), HttpStatusCodes::CONFLICT);
+      return new HttpResponse(["error" => $exception->getMessage()], HttpStatusCodes::CONFLICT);
     } catch (InsufficientPermissionsException $exception) {
-      return new HttpResponse($exception->getMessage(), HttpStatusCodes::FORBIDDEN);
+      return new HttpResponse(["error" => $exception->getMessage()], HttpStatusCodes::FORBIDDEN);
     }
   }
 
@@ -98,7 +98,7 @@ class UserController {
       $result = $useCase->execute($inputDto);
       return new HttpResponse($result, HttpStatusCodes::OK);
     } catch (EntityNotFoundException $exception) {
-      return new HttpResponse($exception->getMessage(), HttpStatusCodes::NOT_FOUND);
+      return new HttpResponse(["error" => $exception->getMessage()], HttpStatusCodes::NOT_FOUND);
     }
   }
 
@@ -106,26 +106,26 @@ class UserController {
     try {
       $useCase = ChangePasswordUseCaseFactory::make($this->loggedUser);
 
-      $validationException = UserControllerValidations::changePasswordValidations();
+      $validationException = UserControllerValidations::changePasswordValidations()->validate($request->body);
 
       if($validationException) throw $validationException;
 
       $inputDto = new ChangePasswordInputDTO(
-        $request->body?->newPassword,
-        $request->body?->newPasswordConfirmation,
-        $request->body?->oldPassword,
+        $request->body['newPassword'],
+        $request->body['newPasswordConfirmation'],
+        $request->body['oldPassword'],
       );
 
       $useCase->execute($inputDto);
       return new HttpResponse(null, HttpStatusCodes::NO_CONTENT);
     } catch (MissingRequiredFieldException $exception) {
-      return new HttpResponse($exception->getMessage(), HttpStatusCodes::BAD_REQUEST);
+      return new HttpResponse(["error" => $exception->getMessage()], HttpStatusCodes::BAD_REQUEST);
     } catch (PasswordAndConfirmationMismatchException $exception) {
-      return new HttpResponse($exception->getMessage(), HttpStatusCodes::BAD_REQUEST);
+      return new HttpResponse(["error" => $exception->getMessage()], HttpStatusCodes::BAD_REQUEST);
     } catch (WeakPasswordException $exception) {
-      return new HttpResponse($exception->getMessage(), HttpStatusCodes::BAD_REQUEST);
+      return new HttpResponse(["error" => $exception->getMessage()], HttpStatusCodes::BAD_REQUEST);
     } catch (OldPasswordIsWrongException $exception) {
-      return new HttpResponse($exception->getMessage(), HttpStatusCodes::BAD_REQUEST);
+      return new HttpResponse(["error" => $exception->getMessage()], HttpStatusCodes::BAD_REQUEST);
     }
   }
 
@@ -133,16 +133,20 @@ class UserController {
     try {
       $useCase = ConfirmEmailUseCaseFactory::make($this->loggedUser);
 
+      $validationException = UserControllerValidations::confirmEmailValidations()->validate($request->body);
+
+      if($validationException) throw $validationException;
+
       $inputDto = new ConfirmEmailInputDTO(
-        $request->body?->accessToken
+        $request->body['accessToken']
       );
 
       $useCase->execute($inputDto);
       return new HttpResponse(null, HttpStatusCodes::NO_CONTENT);
     } catch (MissingRequiredFieldException $exception) {
-      return new HttpResponse($exception->getMessage(), HttpStatusCodes::BAD_REQUEST);
+      return new HttpResponse(["error" => $exception->getMessage()], HttpStatusCodes::BAD_REQUEST);
     } catch (EntityNotFoundException $exception) {
-      return new HttpResponse($exception->getMessage(), HttpStatusCodes::NOT_FOUND);
+      return new HttpResponse(["error" => $exception->getMessage()], HttpStatusCodes::NOT_FOUND);
     }
   }
 }

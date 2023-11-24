@@ -7,7 +7,7 @@ class CreateUserInputDTO {
   public function __construct(
     public string $name,
     public string $email,
-    public string $cpf,
+    public ?string $cpf,
     public string $password,
     public string $passwordConfirmation,
     public ?UploadableFile $photo

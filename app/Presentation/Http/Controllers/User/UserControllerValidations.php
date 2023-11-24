@@ -32,12 +32,14 @@ class UserControllerValidations {
   public static function updateUserValidations(array $fields): ValidationComposite {
     $validations = [];
 
-    if(in_array('cpf', $fields)) {
-      $validations[] = new CPFValidation('cpf', new CPFValidatorAdapter());
-    }
+    foreach($fields as $field) {
+      if($field == 'cpf') {
+        $validations[] = new CPFValidation('cpf', new CPFValidatorAdapter());
+      }
 
-    if(in_array('email', $fields)) {
-      $validations[] = new EmailValidation('email', new EmailValidatorAdapter());
+      if($field == 'email') {
+        $validations[] = new EmailValidation('email', new EmailValidatorAdapter());
+      }
     }
 
     return new ValidationComposite($validations);

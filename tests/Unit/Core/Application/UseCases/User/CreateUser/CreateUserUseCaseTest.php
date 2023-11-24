@@ -55,6 +55,22 @@ it("should throw a DuplicatedUniqueFieldException because there is a user with t
   })->toThrow("Field CPF is already in use");
 });
 
+it("should not try to find user by CPF because there is no CPF provided", function() {
+  $user = UserModel::factory()->client()->makeOne([
+    "id" => 1
+  ])->mapToDomain();
+  
+  $this->userRepositoryMock->shouldReceive('findByEmail')->andReturn(null);
+  $this->userRepositoryMock->shouldNotHaveReceived('findByCPF');
+  $this->userRepositoryMock->shouldReceive('create')->andReturn($user);
+  $this->hashGeneratorMock->shouldReceive('generate')->andReturn('hashedPassword');
+  $this->accessTokenRepositoryMock->shouldReceive('find')->andReturn(null);
+  $this->emailSenderMock->shouldReceive('sendMail');
+
+  $this->inputDto->cpf = null;
+  $this->sut->execute($this->inputDto);
+});
+
 it("should throw a PasswordAndConfirmationMismatchException because password and confirmation does not match", function() {
   $this->userRepositoryMock->shouldReceive('findByEmail')->andReturn(null);
   $this->userRepositoryMock->shouldReceive('findByCPF')->andReturn(null);

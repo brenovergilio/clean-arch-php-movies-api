@@ -56,7 +56,9 @@ class CreateUserUseCase extends BaseUseCase {
     $userByEmail = $this->userRepository->findByEmail($input->email);
     if($userByEmail) throw new DuplicatedUniqueFieldException(Email::CLASS_NAME);
 
-    $userByCPF = $this->userRepository->findByCPF($input->cpf);
-    if($userByCPF) throw new DuplicatedUniqueFieldException(CPF::CLASS_NAME);
+    if($input->cpf) {
+      $userByCPF = $this->userRepository->findByCPF($input->cpf);
+      if($userByCPF) throw new DuplicatedUniqueFieldException(CPF::CLASS_NAME);
+    }
   }
 }
