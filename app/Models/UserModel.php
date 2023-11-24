@@ -65,7 +65,7 @@ class UserModel extends Authenticatable
     }
 
     public static function mapRoleToDomain(string $role): Role {
-        return $role === 'admin' ? Role::ADMIN : Role::CLIENT;
+        return Role::from($role);
     }
 
     public function mergeDomain(User $user): void {
@@ -79,6 +79,6 @@ class UserModel extends Authenticatable
     }
 
     public static function mapRoleToModel(Role $role): string {
-        return $role === Role::ADMIN ? 'admin' : 'client';
+        return $role->value;
     }
 }

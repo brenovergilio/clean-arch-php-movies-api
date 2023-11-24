@@ -2,7 +2,7 @@
 
 namespace App\Core\Domain\Entities\AccessToken;
 
-enum AccessTokenIntent {
-  case CONFIRM_EMAIL;
-  case RECOVER_PASSWORD;
+enum AccessTokenIntent: string {
+  case CONFIRM_EMAIL = 'confirm-email';
+  case RECOVER_PASSWORD = 'recover-password';
 }

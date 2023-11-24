@@ -2,7 +2,7 @@
 
 namespace App\Presentation\Validations;
 use App\Core\Domain\Exceptions\InvalidFieldException;
-use App\Presentation\Interfaces\Validation;
+use App\Presentation\Validations\Interfaces\Validation;
 use App\Presentation\Validations\Interfaces\CPFValidator;
 use Exception;
 

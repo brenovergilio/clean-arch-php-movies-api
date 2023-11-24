@@ -2,11 +2,11 @@
 
 namespace App\Core\Domain\Entities\Movie;
 
-enum MovieGenre {
-  case HORROR;
-  case DRAMA;
-  case ACTION;
-  case ROMANCE;
-  case COMEDY;
-  case FANTASY;
+enum MovieGenre: string {
+  case HORROR = "horror";
+  case DRAMA = "drama";
+  case ACTION = "action";
+  case ROMANCE = "romance";
+  case COMEDY = "comedy";
+  case FANTASY = "fantasy";
 }

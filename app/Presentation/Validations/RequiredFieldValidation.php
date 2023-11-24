@@ -2,7 +2,7 @@
 
 namespace App\Presentation\Validations;
 use App\Core\Domain\Exceptions\MissingRequiredFieldException;
-use App\Presentation\Interfaces\Validation;
+use App\Presentation\Validations\Interfaces\Validation;
 use Exception;
 
 class RequiredFieldValidation implements Validation {

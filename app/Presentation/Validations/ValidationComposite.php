@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Presentation\Validations;
-use App\Presentation\Interfaces\Validation;
+use App\Presentation\Validations\Interfaces\Validation;
 use Exception;
 
 class ValidationComposite implements Validation {

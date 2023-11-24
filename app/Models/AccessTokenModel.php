@@ -50,10 +50,10 @@ class AccessTokenModel extends Model
     }
 
     public static function mapIntentToDomain(string $intent): AccessTokenIntent {
-        return $intent === 'confirm-email' ? AccessTokenIntent::CONFIRM_EMAIL : AccessTokenIntent::RECOVER_PASSWORD;
+        return AccessTokenIntent::from($intent);
     }
 
     public static function mapIntentToModel(AccessTokenIntent $intent): string {
-        return $intent === AccessTokenIntent::CONFIRM_EMAIL ? 'confirm-email' : 'recover-password';
+        return $intent->value;
     }
 }

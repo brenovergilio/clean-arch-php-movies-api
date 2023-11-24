@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Presentation\Interfaces;
+namespace App\Presentation\Validations\Interfaces;
 use Exception;
 
 interface Validation {

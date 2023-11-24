@@ -52,20 +52,7 @@ class MovieModel extends Model
     }
 
     public static function mapGenreToDomain(string $genre): MovieGenre {
-        switch($genre) {
-            case 'horror':
-                return MovieGenre::HORROR;
-            case 'drama':
-                return MovieGenre::DRAMA;
-            case 'action':
-                return MovieGenre::ACTION;
-            case 'romance':
-                return MovieGenre::ROMANCE;
-            case 'comedy':
-                return MovieGenre::COMEDY;
-            default:
-                return MovieGenre::FANTASY;
-        }
+        return MovieGenre::from($genre);
     }
 
     public function mergeDomain(Movie $movie): void {
@@ -79,19 +66,6 @@ class MovieModel extends Model
     }
 
     public static function mapGenreToModel(MovieGenre $genre): string {
-        switch($genre) {
-            case MovieGenre::HORROR:
-                return 'horror';
-            case MovieGenre::DRAMA:
-                return 'drama';
-            case MovieGenre::ACTION:
-                return 'action';
-            case MovieGenre::ROMANCE:
-                return 'romance';
-            case MovieGenre::COMEDY:
-                return 'comedy';
-            default:
-                return 'fantasy';
-        }
+        return $genre->value;
     }
 }
