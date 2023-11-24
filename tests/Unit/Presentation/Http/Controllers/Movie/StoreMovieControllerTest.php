@@ -1,4 +1,5 @@
 <?php
+use App\Core\Application\Exceptions\InsufficientPermissionsException;
 use App\Core\Application\UseCases\Movie\CreateMovie\CreateMovieUseCase;
 use App\Presentation\Http\Controllers\Movie\StoreMovieController;
 use App\Presentation\Http\HttpStatusCodes;
@@ -85,6 +86,24 @@ it('should return 400 status code because required field releaseDate is missing'
   $result = $this->sut->store($httpRequest);
   expect($result->statusCode)->toBe(HttpStatusCodes::BAD_REQUEST);
   expect($result->body['error'])->toBe("Field releaseDate is missing");
+});
+
+it('should return 403 status code because use case thrown InsufficientPermissionsException', function() {
+  $body = [
+    "title" => "title",
+    "synopsis" => "synopsis",
+    "directorName" => "directorName",
+    "genre" => "comedy",
+    "isPublic" => true,
+    "releaseDate" => new DateTime()
+  ];
+  $httpRequest = new HttpRequest($body);
+
+  $this->createMovieUseCaseMock->shouldReceive('execute')->andThrow(new InsufficientPermissionsException());
+
+  $result = $this->sut->store($httpRequest);
+  expect($result->statusCode)->toBe(HttpStatusCodes::FORBIDDEN);
+  expect($result->body['error'])->toBe("Insufficient Permissions");
 });
 
 it('should return 204 status code in case of success', function() {
