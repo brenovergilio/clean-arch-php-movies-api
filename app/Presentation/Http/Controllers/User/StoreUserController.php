@@ -30,7 +30,7 @@ class StoreUserController {
       );
 
       $this->useCase->execute($inputDto);
-      return new HttpResponse(null, HttpStatusCodes::NO_CONTENT);
+      return new HttpResponse(null, HttpStatusCodes::CREATED);
     } catch (PasswordAndConfirmationMismatchException $exception) {
       return new HttpResponse(["error" => $exception->getMessage()], HttpStatusCodes::BAD_REQUEST);
     } catch (MissingRequiredFieldException $exception) {

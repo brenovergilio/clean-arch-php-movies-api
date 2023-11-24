@@ -31,7 +31,7 @@ class StoreMovieController {
       );
 
       $this->useCase->execute($inputDto);
-      return new HttpResponse(null, HttpStatusCodes::NO_CONTENT);
+      return new HttpResponse(null, HttpStatusCodes::CREATED);
     } catch (MissingRequiredFieldException $exception) {
       return new HttpResponse(["error" => $exception->getMessage()], HttpStatusCodes::BAD_REQUEST);
     } catch (InsufficientPermissionsException $exception) {
