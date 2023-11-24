@@ -8,4 +8,6 @@ it("should return path", function() {
   
   $sut = new LaravelUploadableFile($uploadableFile);
   expect($sut->upload())->toBe("path");
+
+  Mockery::close();
 });

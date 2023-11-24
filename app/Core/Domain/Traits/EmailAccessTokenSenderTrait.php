@@ -15,6 +15,7 @@ trait EmailAccessTokenSenderTrait {
     $subject = $intent === AccessTokenIntent::CONFIRM_EMAIL ? "Confirm your email" : "Recover your password";
 
     $this->emailSender->sendMail($user->email(), $subject, [
+      "nomeUsuario" => $user->name(),
       "token" => $token->getToken()
     ]);
   }
