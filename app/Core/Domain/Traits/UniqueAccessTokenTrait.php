@@ -13,6 +13,7 @@ trait UniqueAccessTokenTrait {
       $accessToken->generateNewToken();
     }
 
+    $this->accessTokenRepository->create($accessToken);
     return $accessToken;
   }
 }

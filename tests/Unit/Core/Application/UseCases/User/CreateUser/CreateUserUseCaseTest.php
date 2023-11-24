@@ -67,6 +67,7 @@ it("should not try to find user by CPF because there is no CPF provided", functi
   $this->hashGeneratorMock->shouldReceive('generate')->andReturn('hashedPassword');
   $this->accessTokenRepositoryMock->shouldReceive('find')->andReturn(null);
   $this->emailSenderMock->shouldReceive('sendMail');
+  $this->accessTokenRepositoryMock->shouldReceive('create');
 
   $this->inputDto->cpf = null;
   $this->sut->execute($this->inputDto);
@@ -94,6 +95,7 @@ it("should call upload() method on UploadableFile with right folder value, when 
   $this->hashGeneratorMock->shouldReceive('generate')->andReturn('hashedPassword');
   $this->accessTokenRepositoryMock->shouldReceive('find')->andReturn(null);
   $this->emailSenderMock->shouldReceive('sendMail');
+  $this->accessTokenRepositoryMock->shouldReceive('create');
 
   $uploadableFile = Mockery::mock(UploadableFile::class);
   $uploadableFile->shouldReceive('upload')->with(Folders::USERS)->once();
@@ -116,6 +118,8 @@ it("should execute flow successfully", function() {
   $this->hashGeneratorMock->shouldReceive('generate')->once()->andReturn('hashedPassword');
   $this->accessTokenRepositoryMock->shouldReceive('find')->once()->andReturn(null);
   $this->emailSenderMock->shouldReceive('sendMail')->once();
+  $this->accessTokenRepositoryMock->shouldReceive('create');
+  
   $this->userRepositoryMock->shouldReceive('create')->with(Mockery::on(function ($argument) use ($createdUser) {
 
     return $argument->name() === $createdUser->name() &&

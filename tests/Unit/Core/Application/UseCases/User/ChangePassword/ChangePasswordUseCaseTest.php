@@ -53,7 +53,7 @@ it('should throw an OldPasswordIsWrongException because old password provided do
 it('should call compare() with right values', function() {
   $this->userRepositoryMock->shouldReceive('findByID')->andReturn($this->loggedUser);
   $this->userRepositoryMock->shouldReceive('update');
-  $this->hashComparerMock->shouldReceive('compare')->with($this->loggedUser->password(), $this->inputDto->oldPassword)->andReturn(true)->once();
+  $this->hashComparerMock->shouldReceive('compare')->with($this->inputDto->oldPassword, $this->loggedUser->password())->andReturn(true)->once();
   $this->hashGeneratorMock->shouldReceive('generate');
 
   $this->sut->execute($this->inputDto);

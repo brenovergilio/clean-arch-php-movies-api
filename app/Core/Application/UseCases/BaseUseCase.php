@@ -10,7 +10,7 @@ abstract class BaseUseCase {
   }
 
   public function checkSameUser(User $user, string|int $id): void {
-    if($user->id() !== $id) throw new InsufficientPermissionsException;
+    if($user->id() != $id) throw new InsufficientPermissionsException;
   }
 
   public function checkEmailConfirmed(User $user): void {

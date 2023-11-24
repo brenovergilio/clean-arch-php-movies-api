@@ -15,6 +15,8 @@ class EloquentUserRepository implements UserRepository {
       $eloquentUser->refresh();
       return $eloquentUser->mapToDomain();
     }
+    
+    return null;
   }
 
   public function update(User $user, bool $returning = false): ?User {
@@ -26,6 +28,8 @@ class EloquentUserRepository implements UserRepository {
       $eloquentUser->refresh();
       return $eloquentUser->mapToDomain();
     }
+
+    return null;
   }
 
   public function findByID(string|int $id): ?User {

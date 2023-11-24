@@ -76,6 +76,7 @@ it('should not throw a DuplicatedUniqueFieldException because the email provided
   $this->userRepositoryMock->shouldReceive('findByCPF')->andReturn(null);
   $this->accessTokenRepositoryMock->shouldReceive('find');
   $this->emailSenderMock->shouldReceive('sendMail');
+  $this->accessTokenRepositoryMock->shouldReceive('create');
 
   $this->userRepositoryMock->shouldReceive('update')->once();
 
@@ -88,9 +89,36 @@ it('should not throw a DuplicatedUniqueFieldException because the CPF provided b
   $this->userRepositoryMock->shouldReceive('findByCPF')->andReturn($this->loggedUser);
   $this->accessTokenRepositoryMock->shouldReceive('find');
   $this->emailSenderMock->shouldReceive('sendMail');
+  $this->accessTokenRepositoryMock->shouldReceive('create');
 
   $this->userRepositoryMock->shouldReceive('update')->once();
 
+  $this->sut->execute($this->inputDto);
+});
+
+it('should not call findByCPF because there is no CPF provided', function() {
+  $this->userRepositoryMock->shouldReceive('findByID')->andReturn($this->loggedUser);  
+  $this->userRepositoryMock->shouldReceive('findByEmail')->andReturn(null);
+  $this->accessTokenRepositoryMock->shouldReceive('find');
+  $this->emailSenderMock->shouldReceive('sendMail');
+  $this->userRepositoryMock->shouldReceive('update');
+  $this->accessTokenRepositoryMock->shouldReceive('create');
+  $this->userRepositoryMock->shouldNotHaveReceived('findByCPF');
+
+  $this->inputDto->cpf = null;
+  $this->sut->execute($this->inputDto);
+});
+
+it('should not call findByEmail because there is no email provided', function() {
+  $this->userRepositoryMock->shouldReceive('findByID')->andReturn($this->loggedUser);  
+  $this->userRepositoryMock->shouldReceive('findByCPF')->andReturn(null);
+  $this->accessTokenRepositoryMock->shouldReceive('find');
+  $this->emailSenderMock->shouldReceive('sendMail');
+  $this->userRepositoryMock->shouldReceive('update');
+  $this->accessTokenRepositoryMock->shouldReceive('create');
+  $this->userRepositoryMock->shouldNotHaveReceived('findByEmail');
+
+  $this->inputDto->email = null;
   $this->sut->execute($this->inputDto);
 });
 
@@ -100,6 +128,7 @@ it('should call upload() method with right folder value if a photo is provided',
   $this->userRepositoryMock->shouldReceive('findByCPF')->andReturn(null);
   $this->accessTokenRepositoryMock->shouldReceive('find');
   $this->emailSenderMock->shouldReceive('sendMail');
+  $this->accessTokenRepositoryMock->shouldReceive('create');
 
   $uploadableFile = Mockery::mock(UploadableFile::class);
   $uploadableFile->shouldReceive('upload')->with(Folders::USERS)->once();
@@ -127,6 +156,7 @@ it('should call update() with the right values', function() {
   $this->userRepositoryMock->shouldReceive('findByCPF')->andReturn(null);
   $this->accessTokenRepositoryMock->shouldReceive('find');
   $this->emailSenderMock->shouldReceive('sendMail');
+  $this->accessTokenRepositoryMock->shouldReceive('create');
 
   $this->userRepositoryMock->shouldReceive('update')->with(Mockery::on(function ($argument) use ($updatedUser) {
     return $argument->id() === $updatedUser->id() &&

@@ -21,7 +21,7 @@ class ChangePasswordUseCase extends BaseUseCase {
   public function execute(ChangePasswordInputDTO $input): void {
     if($input->newPassword !== $input->newPasswordConfirmation) throw new PasswordAndConfirmationMismatchException;
 
-    $oldPasswordIsRight = $this->hashComparer->compare($this->loggedUser->password(), $input->oldPassword);
+    $oldPasswordIsRight = $this->hashComparer->compare($input->oldPassword, $this->loggedUser->password());
     if(!$oldPasswordIsRight) throw new OldPasswordIsWrongException;
 
     $newHashedPassword = $this->hashGenerator->generate($input->newPassword);

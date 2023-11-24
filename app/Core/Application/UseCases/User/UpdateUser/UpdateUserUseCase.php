@@ -44,11 +44,15 @@ class UpdateUserUseCase extends BaseUseCase {
   }
 
   private function validateUniqueness(UpdateUserInputDTO $input): void {
-    $userByEmail = $this->userRepository->findByEmail($input->email);
-    if($userByEmail && $userByEmail->id() !== $this->loggedUser->id()) throw new DuplicatedUniqueFieldException(Email::CLASS_NAME);
+    if($input->email) {
+      $userByEmail = $this->userRepository->findByEmail($input->email);
+      if($userByEmail && $userByEmail->id() !== $this->loggedUser->id()) throw new DuplicatedUniqueFieldException(Email::CLASS_NAME);
+    }
 
-    $userByCPF = $this->userRepository->findByCPF($input->cpf);
-    if($userByCPF && $userByCPF->id() !== $this->loggedUser->id()) throw new DuplicatedUniqueFieldException(CPF::CLASS_NAME);
+    if($input->cpf) {
+      $userByCPF = $this->userRepository->findByCPF($input->cpf);
+      if($userByCPF && $userByCPF->id() !== $this->loggedUser->id()) throw new DuplicatedUniqueFieldException(CPF::CLASS_NAME);
+    }
   }
 
   private function mergeProperties(UpdateUserInputDTO $input, User $user): void
