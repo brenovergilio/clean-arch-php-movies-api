@@ -16,7 +16,6 @@ beforeEach(function() {
   ])->mapToDomain();
 
   $this->inputDto = new ChangePasswordInputDTO(
-    $this->loggedUser->id(),
     'newPassword',
     'newPassword',
     'password'
@@ -34,29 +33,12 @@ afterEach(function() {
   Mockery::close();
 });
 
-
-it('should throw an InsufficientPermissionsException because logged user ID does not match target user ID', function() {
-  $this->inputDto->id = "anotherId";
-
-  expect(function() {
-    $this->sut->execute($this->inputDto);
-  })->toThrow("Insufficient Permissions");
-});
-
 it('should throw a PasswordAndConfirmationMismatchException because new password and new password confirmation are different', function() {
   $this->inputDto->newPasswordConfirmation = "differentPassword";
 
   expect(function() {
     $this->sut->execute($this->inputDto);
   })->toThrow("Password and confirmation are not equal");
-});
-
-it('should throw an EntityNotFoundException because user does not exist', function() {
-  $this->userRepositoryMock->shouldReceive('findByID')->andReturn(null);
-
-  expect(function() {
-    $this->sut->execute($this->inputDto);
-  })->toThrow("Entity User not found");
 });
 
 it('should throw an OldPasswordIsWrongException because old password provided does not match the actual old password', function() {
