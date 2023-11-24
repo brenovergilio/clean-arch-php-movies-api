@@ -5,13 +5,21 @@ use App\Core\Application\UseCases\Auth\Login\DTO\LoginInputDTO;
 use App\Core\Application\UseCases\Auth\Login\LoginUseCase;
 use App\Core\Domain\Entities\User\UserRepository;
 use App\Core\Domain\Entities\User\User;
+use App\Models\UserModel;
 
 beforeEach(function() {
   $this->userRepositoryMock = Mockery::mock(UserRepository::class);
   $this->hashComparerMock = Mockery::mock(HashComparer::class);
   $this->tokenGeneratorMock = Mockery::mock(TokenGenerator::class);
 
-  $this->user = new User("id", "name", "146.290.370-39", "valid@mail.com", "password", \App\Core\Domain\Entities\User\Role::CLIENT, 'photo', true);
+  $this->user = UserModel::factory()->client()->make([
+    "name" => "name",
+    "cpf" => "14629037039",
+    "email" => "valid@mail.com",
+    "password" => "password",
+    "photo" => "photo"
+  ])->mapToDomain();
+  
   $this->inputDto = new LoginInputDTO(
     $this->user->email(),
     $this->user->password()
@@ -52,7 +60,7 @@ it("should call generate() with right values", function() {
            $argument->email() === $this->user->email() &&
            $argument->password() === $this->user->password() &&
            $argument->photo() === $this->user->photo();
-  }), ['id'])->once();
+  }), [$this->user->id()])->once();
 
   $this->sut->execute($this->inputDto);
 });
