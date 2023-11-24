@@ -27,9 +27,7 @@ class FindUserUseCase extends BaseUseCase {
       $user->name(),
       $user->cpf(),
       $user->email(),
-      $user->photo(),
-      $user->isAdmin(),
-      $user->isEmailConfirmed()
+      $user->photo()  
     );
   }
 }

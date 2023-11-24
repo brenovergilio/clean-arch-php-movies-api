@@ -42,6 +42,4 @@ it('should return the DTO representing the found user', function() {
   expect($result->cpf)->toBe($user->cpf());
   expect($result->email)->toBe($user->email());
   expect($result->photo)->toBe($user->photo());
-  expect($result->isAdmin)->toBe($user->isAdmin());
-  expect($result->emailConfirmed)->toBe($user->isEmailConfirmed());
 });

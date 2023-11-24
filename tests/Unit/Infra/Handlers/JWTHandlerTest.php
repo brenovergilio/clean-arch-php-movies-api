@@ -13,7 +13,7 @@ it('should match all tokenized values with the original object values', function
   $this->originalObject->id = 'id';
   $this->originalObject->email = 'email';
 
-  $result = $this->sut->generate($this->originalObject, ['id', 'email']);
+  $result = $this->sut->generate($this->originalObject, ['id', 'email'], null, false);
   $decodedResult = JWT::decode($result, new Key($this->secret, 'HS256'));
 
   expect($this->originalObject->id)->toBe($decodedResult->id);
@@ -25,7 +25,7 @@ it('should tokenize only id', function() {
   $this->originalObject->id = 'id';
   $this->originalObject->email = 'email';
 
-  $result = $this->sut->generate($this->originalObject, ['id']);
+  $result = $this->sut->generate($this->originalObject, ['id'], null, false);
   $decodedResult = JWT::decode($result, new Key($this->secret, 'HS256'));
 
   expect($this->originalObject->id)->toBe($decodedResult->id);
@@ -36,7 +36,7 @@ it('should have expiration property', function() {
   $this->originalObject->id = 'id';
   $this->originalObject->email = 'email';
 
-  $result = $this->sut->generate($this->originalObject, ['id', 'email']);
+  $result = $this->sut->generate($this->originalObject, ['id', 'email'], null, false);
   $decodedResult = JWT::decode($result, new Key($this->secret, 'HS256'));
 
   expect(property_exists($decodedResult, 'exp'))->toBeTrue();

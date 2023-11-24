@@ -8,8 +8,6 @@ class FindUserOutputDTO {
     public string $name,
     public ?string $cpf,
     public string $email,
-    public ?string $photo,
-    public bool $isAdmin,
-    public bool $emailConfirmed
+    public ?string $photo
   ) {}
 }
