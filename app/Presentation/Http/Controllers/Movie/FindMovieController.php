@@ -10,7 +10,7 @@ use App\Presentation\Http\HttpResponse;
 class FindMovieController {
   public function __construct(private FindMovieUseCase $useCase) {}
 
-  public function update(string|int $id): HttpResponse {
+  public function show(string|int $id): HttpResponse {
     try {
       
       $inputDto = new FindMovieInputDTO(
