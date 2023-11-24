@@ -12,6 +12,7 @@ class AccessTokenModel extends Model
     use HasFactory;
 
     protected $table = "access_tokens";
+    protected $primaryKey = "token";
 
     /**
      * The attributes that are mass assignable.

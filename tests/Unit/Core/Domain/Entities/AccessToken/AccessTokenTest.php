@@ -12,6 +12,11 @@ it("should return token intent", function() {
   expect($accessToken->getIntent())->toBe(AccessTokenIntent::CONFIRM_EMAIL);
 });
 
+it("should return time to leave in seconds", function() { 
+  $accessToken = new AccessToken(AccessTokenIntent::CONFIRM_EMAIL, "userId", 60*60, new DateTime(), "123456");
+  expect($accessToken->getTimeToLeave())->toBe(60*60);
+});
+
 it("should return related user ID", function() { 
   $accessToken = new AccessToken(AccessTokenIntent::CONFIRM_EMAIL, "userId", 60*60, new DateTime(), "123456");
   expect($accessToken->getRelatedUserID())->toBe("userId");

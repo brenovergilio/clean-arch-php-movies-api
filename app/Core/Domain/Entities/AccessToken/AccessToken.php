@@ -33,6 +33,10 @@ class AccessToken {
     return $this->intent;
   }
 
+  public function getTimeToLeave(): int {
+    return $this->timeToLeaveInSeconds;
+  }
+
   public function generateNewToken(): void {
     $tokenLength = 6;
 
