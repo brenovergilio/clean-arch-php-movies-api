@@ -5,7 +5,7 @@ use App\Core\Application\UseCases\Movie\CreateMovie\CreateMovieUseCase;
 use App\Core\Application\UseCases\Movie\CreateMovie\DTO\CreateMovieInputDTO;
 use App\Core\Domain\Exceptions\MissingRequiredFieldException;
 use App\Models\MovieModel;
-use App\Presentation\Http\Controllers\User\MovieControllerValidations;
+use App\Presentation\Http\Controllers\Movie\MovieControllerValidations;
 use App\Presentation\Http\HttpStatusCodes;
 use App\Presentation\Http\HttpRequest;
 use App\Presentation\Http\HttpResponse;

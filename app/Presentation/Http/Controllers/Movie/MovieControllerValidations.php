@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Presentation\Http\Controllers\User;
+namespace App\Presentation\Http\Controllers\Movie;
 use App\Presentation\Validations\RequiredFieldValidation;
 use App\Presentation\Validations\ValidationComposite;
 
