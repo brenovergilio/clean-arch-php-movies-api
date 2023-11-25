@@ -4,6 +4,7 @@ namespace App\Core\Application\UseCases\User\UpdateUser;
 
 use App\Core\Application\Exceptions\DuplicatedUniqueFieldException;
 use App\Core\Application\Interfaces\EmailSender;
+use App\Core\Application\Interfaces\FileManipulator;
 use App\Core\Application\Interfaces\Folders;
 use App\Core\Application\UseCases\BaseUseCase;
 use App\Core\Application\UseCases\User\UpdateUser\DTO\UpdateUserInputDTO;
@@ -13,7 +14,6 @@ use App\Core\Domain\Entities\User\Email;
 use App\Core\Domain\Entities\User\CPF;
 use App\Core\Domain\Entities\User\User;
 use App\Core\Domain\Entities\User\UserRepository;
-use App\Core\Domain\Exceptions\EntityNotFoundException;
 use App\Core\Domain\Traits\EmailAccessTokenSenderTrait;
 
 class UpdateUserUseCase extends BaseUseCase {
@@ -21,26 +21,22 @@ class UpdateUserUseCase extends BaseUseCase {
     private UserRepository $userRepository,
     private AccessTokenRepository $accessTokenRepository,
     private EmailSender $emailSender,
+    private FileManipulator $fileManipulator,
     private User $loggedUser
   ) {}
 
   use EmailAccessTokenSenderTrait;
 
   public function execute(UpdateUserInputDTO $input): void {
-    $this->checkSameUser($this->loggedUser, $input->id);
-
-    $user = $this->userRepository->findByID($input->id);
-    if(!$user) throw new EntityNotFoundException(User::CLASS_NAME);
-    
     $this->validateUniqueness($input);
 
-    $emailHasChanged = $input->email !== $user->email();
+    $emailHasChanged = $input->email !== $this->loggedUser->email();
 
-    $this->mergeProperties($input, $user);
+    $this->mergeProperties($input, $this->loggedUser);
 
-    $this->userRepository->update($user);
+    $this->userRepository->update($this->loggedUser);
 
-    if($emailHasChanged) $this->handleAccessTokenSending($user, AccessTokenIntent::CONFIRM_EMAIL);
+    if($emailHasChanged) $this->handleAccessTokenSending($this->loggedUser, AccessTokenIntent::CONFIRM_EMAIL);
   }
 
   private function validateUniqueness(UpdateUserInputDTO $input): void {
@@ -63,6 +59,12 @@ class UpdateUserUseCase extends BaseUseCase {
 
     if($input->name) $user->changeName($input->name);
 
-    if($input->photo) $user->changePhoto($input->photo?->upload(Folders::USERS));
+    if($input->photo) {
+      $oldPhotoExists = $this->loggedUser->photo() && $this->fileManipulator->exists($this->loggedUser->photo());
+
+      if($oldPhotoExists) $this->fileManipulator->delete($this->loggedUser->photo());
+      
+      $user->changePhoto($input->photo?->upload(Folders::USERS));
+    }
   }
 }

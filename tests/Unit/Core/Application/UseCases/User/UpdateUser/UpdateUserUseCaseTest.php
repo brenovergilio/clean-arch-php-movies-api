@@ -1,5 +1,6 @@
 <?php
 use App\Core\Application\Interfaces\EmailSender;
+use App\Core\Application\Interfaces\FileManipulator;
 use App\Core\Application\Interfaces\Folders;
 use App\Core\Application\Interfaces\UploadableFile;
 use App\Core\Application\UseCases\User\UpdateUser\DTO\UpdateUserInputDTO;
@@ -14,11 +15,12 @@ beforeEach(function() {
   $this->userRepositoryMock = Mockery::mock(UserRepository::class);
   $this->accessTokenRepositoryMock = Mockery::mock(AccessTokenRepository::class);
   $this->emailSenderMock = Mockery::mock(EmailSender::class);
+  $this->fileManipulatorMock = Mockery::mock(FileManipulator::class);
   $this->loggedUser = UserModel::factory()->client()->makeOne([
     "id" => 1
   ])->mapToDomain();
+
   $this->inputDto = new UpdateUserInputDTO(
-    $this->loggedUser->id(),
     'Another Name',
     'anotherValid@mail.com',
     '51115471007',
@@ -29,21 +31,13 @@ beforeEach(function() {
     $this->userRepositoryMock,
     $this->accessTokenRepositoryMock,
     $this->emailSenderMock,
+    $this->fileManipulatorMock,
     $this->loggedUser,
   );
 });
 
 afterEach(function() {
   Mockery::close();
-});
-
-
-it('should throw an InsufficientPermissionsException because logged user ID is different from input DTO ID', function() {
-  $this->inputDto->id = "anotherId";
-
-  expect(function() {
-    $this->sut->execute($this->inputDto);
-  })->toThrow("Insufficient Permissions");
 });
 
 it('should throw an DuplicatedUniqueFieldException because there is another user with the email provided', function() {
@@ -135,6 +129,60 @@ it('should call upload() method with right folder value if a photo is provided',
  
   $this->inputDto->photo = $uploadableFile;
   $this->userRepositoryMock->shouldReceive('update');
+
+  $this->sut->execute($this->inputDto);
+});
+
+it('should try to delete old photo if a photo is provided and old photo exists in storage', function() {
+  $this->loggedUser = UserModel::factory()->withPhoto()->client()->makeOne([
+    "id" => 1
+  ])->mapToDomain();
+
+  $this->userRepositoryMock->shouldReceive('findByID')->andReturn($this->loggedUser);  
+  $this->userRepositoryMock->shouldReceive('findByEmail')->andReturn(null);
+  $this->userRepositoryMock->shouldReceive('findByCPF')->andReturn(null);
+  $this->accessTokenRepositoryMock->shouldReceive('find');
+  $this->emailSenderMock->shouldReceive('sendMail');
+  $this->fileManipulatorMock->shouldReceive('exists')->with($this->loggedUser->photo())->andReturn(true);
+  $this->userRepositoryMock->shouldReceive('update');
+  $this->accessTokenRepositoryMock->shouldReceive('create');
+  
+  $uploadableFile = Mockery::mock(UploadableFile::class);
+  $uploadableFile->shouldReceive('upload');
+  
+  $this->inputDto->photo = $uploadableFile;
+  $this->fileManipulatorMock->shouldReceive('delete')->once();
+
+  $this->sut = new UpdateUserUseCase(
+    $this->userRepositoryMock,
+    $this->accessTokenRepositoryMock,
+    $this->emailSenderMock,
+    $this->fileManipulatorMock,
+    $this->loggedUser,
+  );
+
+  $this->sut->execute($this->inputDto);
+});
+
+it('should not try to delete old photo if a photo is provided and old photo does not exists in storage', function() {
+  $this->loggedUser = UserModel::factory()->withPhoto()->client()->makeOne([
+    "id" => 1
+  ])->mapToDomain();
+  
+  $this->userRepositoryMock->shouldReceive('findByID')->andReturn($this->loggedUser);  
+  $this->userRepositoryMock->shouldReceive('findByEmail')->andReturn(null);
+  $this->userRepositoryMock->shouldReceive('findByCPF')->andReturn(null);
+  $this->accessTokenRepositoryMock->shouldReceive('find');
+  $this->emailSenderMock->shouldReceive('sendMail');
+  $this->fileManipulatorMock->shouldReceive('exists')->with($this->loggedUser->photo())->andReturn(false);
+  $this->userRepositoryMock->shouldReceive('update');
+  $this->accessTokenRepositoryMock->shouldReceive('create');
+  
+  $uploadableFile = Mockery::mock(UploadableFile::class);
+  $uploadableFile->shouldReceive('upload');
+  
+  $this->inputDto->photo = $uploadableFile;
+  $this->fileManipulatorMock->shouldNotHaveReceived('delete');
 
   $this->sut->execute($this->inputDto);
 });

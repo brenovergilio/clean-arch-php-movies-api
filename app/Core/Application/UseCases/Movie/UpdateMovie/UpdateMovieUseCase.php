@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Core\Application\UseCases\Movie\UpdateMovie;
+use App\Core\Application\Interfaces\FileManipulator;
 use App\Core\Application\Interfaces\Folders;
 use App\Core\Application\UseCases\BaseUseCase;
 use App\Core\Application\UseCases\Movie\UpdateMovie\DTO\UpdateMovieInputDTO;
@@ -12,6 +13,7 @@ use App\Core\Domain\Exceptions\EntityNotFoundException;
 class UpdateMovieUseCase extends BaseUseCase {
   public function __construct(
     private MovieRepository $movieRepository,
+    private FileManipulator $fileManipulator,
     private User $loggedUser
   ) {}
 
@@ -34,7 +36,13 @@ class UpdateMovieUseCase extends BaseUseCase {
 
     if($input->genre) $movie->changeGenre($input->genre);
 
-    if($input->cover) $movie->changeCover($input->cover->upload(Folders::COVERS));
+    if($input->cover) {
+      $oldCoverExists = $movie->cover() && $this->fileManipulator->exists($movie->cover());
+
+      if($oldCoverExists) $this->fileManipulator->delete($movie->cover());
+
+      $movie->changeCover($input->cover->upload(Folders::COVERS));
+    }
 
     if($input->isPublic !== null) $movie->changeVisibility($input->isPublic);
 

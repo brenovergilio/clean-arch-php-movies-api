@@ -5,7 +5,6 @@ use App\Core\Application\Interfaces\UploadableFile;
 
 class UpdateUserInputDTO {
   public function __construct(
-    public string|int $id,
     public ?string $name,
     public ?string $email,
     public ?string $cpf,

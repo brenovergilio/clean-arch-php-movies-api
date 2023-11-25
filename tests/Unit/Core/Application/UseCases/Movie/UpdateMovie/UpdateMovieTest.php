@@ -1,5 +1,6 @@
 <?php
 
+use App\Core\Application\Interfaces\FileManipulator;
 use App\Core\Application\Interfaces\Folders;
 use App\Core\Application\UseCases\Movie\UpdateMovie\DTO\UpdateMovieInputDTO;
 use App\Core\Application\UseCases\Movie\UpdateMovie\UpdateMovieUseCase;
@@ -11,6 +12,7 @@ use App\Models\UserModel;
 
 beforeEach(function() {
   $this->movieRepositoryMock = Mockery::mock(MovieRepository::class);
+  $this->fileManipulatorMock = Mockery::mock(FileManipulator::class);
   $this->loggedUser = UserModel::factory()->makeOne([
     "id" => 1,
     "name" => "name",
@@ -36,7 +38,7 @@ beforeEach(function() {
     $this->now
   );
 
-  $this->sut = new UpdateMovieUseCase($this->movieRepositoryMock, $this->loggedUser);
+  $this->sut = new UpdateMovieUseCase($this->movieRepositoryMock, $this->fileManipulatorMock, $this->loggedUser);
 });
 
 afterEach(function() {
@@ -46,7 +48,7 @@ afterEach(function() {
 
 it("should throw an InsufficientPermissionsException because user is not an admin", function() {
   $this->loggedUser = UserModel::factory()->client()->makeOne()->mapToDomain();
-  $this->sut = new UpdateMovieUseCase($this->movieRepositoryMock, $this->loggedUser);
+  $this->sut = new UpdateMovieUseCase($this->movieRepositoryMock, $this->fileManipulatorMock, $this->loggedUser);
 
   expect(function() {
     $this->sut->execute($this->inputDto);
@@ -72,6 +74,41 @@ it("should call upload() method with right folder value if a cover file is provi
   
   $this->sut->execute($this->inputDto);
 });
+
+it("should try to delete old cover if movie already has one and another one is passed", function() {
+  $this->movie = MovieModel::factory()->makeOne()->mapToDomain();
+  
+  $uploadableFile = Mockery::mock(UploadableFile::class);
+  $uploadableFile->shouldReceive('upload');
+
+  $this->fileManipulatorMock->shouldReceive('exists')->with($this->movie->cover())->andReturn(true);
+  $this->fileManipulatorMock->shouldReceive('delete')->with($this->movie->cover())->once();
+
+  $this->movieRepositoryMock->shouldReceive('findByID')->andReturn($this->movie);
+  $this->movieRepositoryMock->shouldReceive('update');
+
+  $this->inputDto->cover = $uploadableFile;
+  
+  $this->sut->execute($this->inputDto);
+});
+
+it("should not try to delete old cover if a new cover is passed because old one does not exists in storage", function() {
+  $this->movie = MovieModel::factory()->makeOne()->mapToDomain();
+  
+  $uploadableFile = Mockery::mock(UploadableFile::class);
+  $uploadableFile->shouldReceive('upload');
+
+  $this->fileManipulatorMock->shouldReceive('exists')->with($this->movie->cover())->andReturn(false);
+  
+  $this->movieRepositoryMock->shouldReceive('findByID')->andReturn($this->movie);
+  $this->movieRepositoryMock->shouldReceive('update');
+  
+  $this->inputDto->cover = $uploadableFile;
+  
+  $this->fileManipulatorMock->shouldNotHaveReceived('delete');
+  $this->sut->execute($this->inputDto);
+});
+
 
 it("should call update() method with right values", function() {  
   $updatedMovie = MovieModel::factory()->makeOne([
