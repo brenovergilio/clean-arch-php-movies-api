@@ -32,4 +32,20 @@ class MovieControllerValidations {
 
     return new ValidationComposite($validations);
   }
+
+  public static function updateMovieValidations(array $fields): ValidationComposite {
+    $validations = [];
+
+    foreach($fields as $field) {
+      if($field === "title") $validations[] = new PrimitiveTypeValidation('title', 'string');
+      if($field === "synopsis") $validations[] = new PrimitiveTypeValidation('synopsis', 'string');
+      if($field === "directorName") $validations[] = new PrimitiveTypeValidation('directorName', 'string');
+      if($field === "isPublic") $validations[] = new PrimitiveTypeValidation('isPublic', 'bool');
+      if($field === "genre") $validations[] = new IsEnumValidation('genre', new IsEnumValidatorAdapter(), MovieGenre::class);
+      if($field === "releaseDate") $validations[] = new DateTimeValidation('releaseDate', new DateTimeValidatorAdapter());
+      if($field ===  "cover") $validations[] = new InstanceOfValidation('cover', UploadableFile::class);
+    }
+
+    return new ValidationComposite($validations);
+  }
 }

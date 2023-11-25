@@ -5,6 +5,7 @@ use App\Core\Application\UseCases\Movie\UpdateMovie\DTO\UpdateMovieInputDTO;
 use App\Core\Application\UseCases\Movie\UpdateMovie\UpdateMovieUseCase;
 use App\Core\Domain\Exceptions\EntityNotFoundException;
 use App\Core\Application\Exceptions\InsufficientPermissionsException;
+use App\Core\Domain\Exceptions\InvalidFieldException;
 use App\Models\MovieModel;
 use App\Presentation\Http\HttpStatusCodes;
 use App\Presentation\Http\HttpRequest;
@@ -16,6 +17,10 @@ class UpdateMovieController {
 
   public function update(string|int $id, HttpRequest $request): HttpResponse {
     try {
+      $validationException = MovieControllerValidations::updateMovieValidations(array_keys($request->body))->validate($request->body);
+
+      if($validationException) throw $validationException;
+
       $newGenre = isset($request->body['genre']) ? MovieModel::mapGenreToDomain($request->body['genre']) : null;
       $newReleaseDate = isset($request->body["releaseDate"]) ?  DateTime::createFromFormat("Y-m-d", $request->body["releaseDate"]) : null;
       
@@ -33,6 +38,8 @@ class UpdateMovieController {
       $this->useCase->execute($inputDto);
       return new HttpResponse(null, HttpStatusCodes::NO_CONTENT);
     } catch (EntityNotFoundException $exception) {
+      return new HttpResponse(["error" => $exception->getMessage()], HttpStatusCodes::NOT_FOUND);
+    } catch (InvalidFieldException $exception) {
       return new HttpResponse(["error" => $exception->getMessage()], HttpStatusCodes::NOT_FOUND);
     } catch (InsufficientPermissionsException $exception) {
       return new HttpResponse(["error" => $exception->getMessage()], HttpStatusCodes::FORBIDDEN);
