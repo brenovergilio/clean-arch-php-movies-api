@@ -1,4 +1,5 @@
 <?php
+use App\Core\Application\Interfaces\FileManipulator;
 use App\Core\Application\UseCases\Movie\DeleteMovie\DeleteMovieUseCase;
 use App\Core\Application\UseCases\Movie\DeleteMovie\DTO\DeleteMovieInputDTO;
 use App\Core\Domain\Entities\Movie\MovieRepository;
@@ -7,6 +8,7 @@ use App\Models\UserModel;
 
 beforeEach(function() {
   $this->movieRepositoryMock = Mockery::mock(MovieRepository::class);
+  $this->fileManipulatorMock = Mockery::mock(FileManipulator::class);
   $this->inputDto = new DeleteMovieInputDTO('id');
   $this->loggedUser = UserModel::factory()->makeOne([
     "id" => 1,
@@ -17,7 +19,7 @@ beforeEach(function() {
     "photo" => "photo"
   ])->mapToDomain();
 
-  $this->sut = new DeleteMovieUseCase($this->movieRepositoryMock, $this->loggedUser);
+  $this->sut = new DeleteMovieUseCase($this->movieRepositoryMock, $this->fileManipulatorMock, $this->loggedUser);
 });
 
 afterEach(function() {
@@ -27,7 +29,7 @@ afterEach(function() {
 
 it("should throw an InsufficientPermissionsException because user is not an admin", function() {
   $this->loggedUser = UserModel::factory()->client()->makeOne()->mapToDomain();
-  $this->sut = new DeleteMovieUseCase($this->movieRepositoryMock, $this->loggedUser);
+  $this->sut = new DeleteMovieUseCase($this->movieRepositoryMock, $this->fileManipulatorMock, $this->loggedUser);
 
   expect(function() {
     $this->sut->execute($this->inputDto);
@@ -42,11 +44,37 @@ it("should throw an EntityNotFoundException because movie does not exist", funct
   })->toThrow("Entity Movie not found");
 });
 
-it("should call delete() methdo with right value", function() {
+it("should call delete() method with right value", function() {
   $movie = MovieModel::factory()->makeOne()->mapToDomain();
 
   $this->movieRepositoryMock->shouldReceive('findByID')->andReturn($movie);
   $this->movieRepositoryMock->shouldReceive('delete')->with($this->inputDto->id)->once();
+  $this->fileManipulatorMock->shouldReceive('exists');
+  $this->fileManipulatorMock->shouldReceive('delete');
+
+  $this->sut->execute($this->inputDto);
+});
+
+it("should try to delete movie cover, if exists", function() {
+  $movie = MovieModel::factory()->makeOne()->mapToDomain();
+
+  $this->movieRepositoryMock->shouldReceive('findByID')->andReturn($movie);
+  $this->movieRepositoryMock->shouldReceive('delete');
+
+  $this->fileManipulatorMock->shouldReceive('exists')->with($movie->cover())->once()->andReturn(true);
+  $this->fileManipulatorMock->shouldReceive('delete')->with($movie->cover())->once();
+
+  $this->sut->execute($this->inputDto);
+});
+
+it("should not try to delete movie cover, if it does not exist", function() {
+  $movie = MovieModel::factory()->makeOne()->mapToDomain();
+
+  $this->movieRepositoryMock->shouldReceive('findByID')->andReturn($movie);
+  $this->movieRepositoryMock->shouldReceive('delete');
+
+  $this->fileManipulatorMock->shouldReceive('exists')->with($movie->cover())->once()->andReturn(false);
+  $this->fileManipulatorMock->shouldNotHaveReceived('delete');
 
   $this->sut->execute($this->inputDto);
 });
