@@ -78,8 +78,8 @@ it('should return 400 status code because CPF is invalid', function() {
   $body = [
     "name" => "name",
     "email" => "email@mail.com",
-    "password" => "password",
-    "passwordConfirmation" => "password",
+    "password" => "SenhaForte123@.",
+    "passwordConfirmation" => "SenhaForte123@.",
     "cpf" => "invalidCpf"
   ];
   $httpRequest = new HttpRequest($body);
@@ -101,6 +101,35 @@ it('should return 400 status code because password is weak', function() {
   $result = $this->sut->store($httpRequest);
   expect($result->statusCode)->toBe(HttpStatusCodes::BAD_REQUEST);
   expect($result->body['error'])->toBe("The password must contain at least one uppercase letter, one lowercase letter, one special character, and one number");
+});
+
+it('should return 400 status code because name is not a string', function() {
+  $body = [
+    "name" => 123,
+    "email" => "email@mail.com",
+    "password" => "SenhaForte123@",
+    "passwordConfirmation" => "SenhaForte123@",
+  ];
+  $httpRequest = new HttpRequest($body);
+
+  $result = $this->sut->store($httpRequest);
+  expect($result->statusCode)->toBe(HttpStatusCodes::BAD_REQUEST);
+  expect($result->body['error'])->toBe("Field name is invalid");
+});
+
+it('should return 400 status code because photo is not an instance of UploadableFile', function() {
+  $body = [
+    "name" => "name",
+    "email" => "email@mail.com",
+    "password" => "SenhaForte123@",
+    "passwordConfirmation" => "SenhaForte123@",
+    "photo" => "invalidPhoto"
+  ];
+  $httpRequest = new HttpRequest($body);
+
+  $result = $this->sut->store($httpRequest);
+  expect($result->statusCode)->toBe(HttpStatusCodes::BAD_REQUEST);
+  expect($result->body['error'])->toBe("Field photo is invalid");
 });
 
 it('should return 400 status code because use case thrown PasswordAndConfirmationMismatchException', function() {

@@ -23,6 +23,18 @@ it('should return 400 status code because required field accessToken is missing'
   expect($result->body['error'])->toBe("Field accessToken is missing");
 });
 
+it('should return 400 status code because accessToken is not a string', function() {
+  $body = [
+    "accessToken" =>  123
+  ];
+  $httpRequest = new HttpRequest($body);
+
+  $result = $this->sut->confirmEmail($httpRequest);
+  expect($result->statusCode)->toBe(HttpStatusCodes::BAD_REQUEST);
+  expect($result->body['error'])->toBe("Field accessToken is invalid");
+});
+
+
 it('should return 404 status code because use case thrown EntityNotFoundException', function() {
   $body = [
     "accessToken" => "A1B2C3"
