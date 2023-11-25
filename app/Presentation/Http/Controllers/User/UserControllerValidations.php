@@ -37,13 +37,10 @@ class UserControllerValidations {
     $validations = [];
 
     foreach($fields as $field) {
-      if($field == 'cpf') {
-        $validations[] = new CPFValidation('cpf', new CPFValidatorAdapter());
-      }
-
-      if($field == 'email') {
-        $validations[] = new EmailValidation('email', new EmailValidatorAdapter());
-      }
+      if($field == 'cpf') $validations[] = new CPFValidation('cpf', new CPFValidatorAdapter());
+      if($field == 'email') $validations[] = new EmailValidation('email', new EmailValidatorAdapter());
+      if($field == 'photo') $validations[] = new InstanceOfValidation('photo', UploadableFile::class);
+      if($field == 'name') $validations[] = new PrimitiveTypeValidation('name', 'string');
     }
 
     return new ValidationComposite($validations);

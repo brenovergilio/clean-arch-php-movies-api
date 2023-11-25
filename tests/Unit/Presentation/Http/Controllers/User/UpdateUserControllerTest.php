@@ -39,6 +39,28 @@ it('should return 400 status code because email is invalid', function() {
   expect($result->body['error'])->toBe("Field email is invalid");
 });
 
+it('should return 400 status code because name is not a string', function() {
+  $body = [
+    "name" => 123
+  ];
+  $httpRequest = new HttpRequest($body);
+
+  $result = $this->sut->update($httpRequest);
+  expect($result->statusCode)->toBe(HttpStatusCodes::BAD_REQUEST);
+  expect($result->body['error'])->toBe("Field name is invalid");
+});
+
+it('should return 400 status code because photo is not an instance of UploadableFile', function() {
+  $body = [
+    "photo" => "invalidPhoto"
+  ];
+  $httpRequest = new HttpRequest($body);
+
+  $result = $this->sut->update($httpRequest);
+  expect($result->statusCode)->toBe(HttpStatusCodes::BAD_REQUEST);
+  expect($result->body['error'])->toBe("Field photo is invalid");
+});
+
 it('should return 409 status code because use case thrown DuplicatedUniqueFieldException', function() {
   $body = [];
   $this->updateUserUseCaseMock->shouldReceive('execute')->andThrow(new DuplicatedUniqueFieldException("field"));
