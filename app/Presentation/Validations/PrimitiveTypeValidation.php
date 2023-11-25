@@ -5,7 +5,7 @@ use App\Core\Domain\Exceptions\InvalidFieldException;
 use App\Presentation\Validations\Interfaces\Validation;
 use Exception;
 
-class InstanceOfValidation implements Validation {
+class PrimitiveTypeValidation implements Validation {
   public function __construct(private string $fieldName, private string $primitiveType) {}
 
   public function validate($input): ?Exception {

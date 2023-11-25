@@ -1,5 +1,4 @@
 <?php
-use App\Core\Domain\Exceptions\InvalidFieldException;
 use App\Core\Domain\Exceptions\WeakPasswordException;
 use App\Presentation\Validations\PasswordValidation;
 
