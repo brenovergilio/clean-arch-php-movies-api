@@ -14,14 +14,13 @@ use App\Presentation\Http\HttpResponse;
 class UpdateUserController {
   public function __construct(private UpdateUserUseCase $useCase) {}
   
-  public function update(string|int $id, HttpRequest $request): HttpResponse {
+  public function update(HttpRequest $request): HttpResponse {
     try {
       $validationException = UserControllerValidations::updateUserValidations(array_keys($request->body))->validate($request->body);
 
       if($validationException) throw $validationException;
 
       $inputDto = new UpdateUserInputDTO(
-        $id,
         $request->body['name'] ?? null,
         $request->body['email'] ?? null,
         $request->body['cpf'] ?? null,

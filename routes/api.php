@@ -95,7 +95,7 @@ Route::patch('/user/change-password', function (Request $request) {
     return response()->json($result->body, $result->statusCode->value);
 })->middleware('jwt.auth');
 
-Route::post('/user/{id}', function (string|int $id, Request $request) {
+Route::post('/user/update', function (Request $request) {
     $loggedUser = auth()->user()->mapToDomain();
     $updateUserUseCase = UpdateUserUseCaseFactory::make($loggedUser);
     $controller = new UpdateUserController($updateUserUseCase);
@@ -103,7 +103,7 @@ Route::post('/user/{id}', function (string|int $id, Request $request) {
     $httpRequest = new HttpRequest($request->all());
     if($request->hasFile("photo")) $httpRequest->body["photo"] = new LaravelUploadableFile($request->file("photo"));
 
-    $result = $controller->update($id, $httpRequest);
+    $result = $controller->update($httpRequest);
     
     return response()->json($result->body, $result->statusCode->value);
 })->middleware('jwt.auth');

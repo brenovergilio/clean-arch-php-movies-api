@@ -30,7 +30,7 @@ class UpdateUserUseCase extends BaseUseCase {
   public function execute(UpdateUserInputDTO $input): void {
     $this->validateUniqueness($input);
 
-    $emailHasChanged = $input->email !== $this->loggedUser->email();
+    $emailHasChanged = $input->email && $input->email !== $this->loggedUser->email();
 
     $this->mergeProperties($input, $this->loggedUser);
 
