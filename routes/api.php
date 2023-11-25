@@ -137,7 +137,6 @@ Route::post('/movie', function (Request $request) {
     $httpRequest = new HttpRequest($request->all());
 
     if($request->hasFile("cover")) $httpRequest->body["cover"] = new LaravelUploadableFile($request->file("cover"));
-    if($request->has("releaseDate")) $httpRequest->body["releaseDate"] = DateTime::createFromFormat("Y-m-d", $httpRequest->body["releaseDate"]);
 
     $result = $controller->store($httpRequest);
 
@@ -152,7 +151,6 @@ Route::post('/movie/{id}', function (string|int $id, Request $request) {
     $httpRequest = new HttpRequest($request->all());
 
     if($request->hasFile("cover")) $httpRequest->body["cover"] = new LaravelUploadableFile($request->file("cover"));
-    if($request->has("releaseDate")) $httpRequest->body["releaseDate"] = DateTime::createFromFormat("Y-m-d", $httpRequest->body["releaseDate"]);
 
     $result = $controller->update($id, $httpRequest);
 

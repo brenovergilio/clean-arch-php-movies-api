@@ -9,6 +9,7 @@ use App\Models\MovieModel;
 use App\Presentation\Http\HttpStatusCodes;
 use App\Presentation\Http\HttpRequest;
 use App\Presentation\Http\HttpResponse;
+use DateTime;
 
 class UpdateMovieController {
   public function __construct(private UpdateMovieUseCase $useCase) {}
@@ -16,6 +17,7 @@ class UpdateMovieController {
   public function update(string|int $id, HttpRequest $request): HttpResponse {
     try {
       $newGenre = isset($request->body['genre']) ? MovieModel::mapGenreToDomain($request->body['genre']) : null;
+      $newReleaseDate = isset($request->body["releaseDate"]) ?  DateTime::createFromFormat("Y-m-d", $request->body["releaseDate"]) : null;
       
       $inputDto = new UpdateMovieInputDTO(
         $id,
@@ -25,7 +27,7 @@ class UpdateMovieController {
         $newGenre,
         $request->body['cover'] ?? null,
         $request->body['isPublic'] ?? null,
-        $request->body['releaseDate'] ?? null,
+        $newReleaseDate,
       );
 
       $this->useCase->execute($inputDto);

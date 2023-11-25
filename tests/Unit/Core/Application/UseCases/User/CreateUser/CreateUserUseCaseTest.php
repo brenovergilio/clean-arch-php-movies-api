@@ -6,6 +6,7 @@ use App\Core\Application\Interfaces\UploadableFile;
 use App\Core\Application\UseCases\User\CreateUser\CreateUserUseCase;
 use App\Core\Application\UseCases\User\CreateUser\DTO\CreateUserInputDTO;
 use App\Core\Domain\Entities\AccessToken\AccessTokenRepository;
+use App\Core\Domain\Entities\User\Role;
 use App\Core\Domain\Entities\User\UserRepository;
 use App\Models\UserModel;
 

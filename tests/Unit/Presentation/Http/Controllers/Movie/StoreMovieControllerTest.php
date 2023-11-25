@@ -95,7 +95,7 @@ it('should return 403 status code because use case thrown InsufficientPermission
     "directorName" => "directorName",
     "genre" => "comedy",
     "isPublic" => true,
-    "releaseDate" => new DateTime()
+    "releaseDate" => "2000-01-01"
   ];
   $httpRequest = new HttpRequest($body);
 
@@ -113,7 +113,7 @@ it('should return 201 status code in case of success', function() {
     "directorName" => "directorName",
     "genre" => "comedy",
     "isPublic" => true,
-    "releaseDate" => new DateTime()
+    "releaseDate" => "2000-01-01"
   ];
   
   $this->createMovieUseCaseMock->shouldReceive('execute')->once();

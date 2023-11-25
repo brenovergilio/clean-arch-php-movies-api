@@ -10,6 +10,7 @@ use App\Presentation\Http\Controllers\Movie\MovieControllerValidations;
 use App\Presentation\Http\HttpStatusCodes;
 use App\Presentation\Http\HttpRequest;
 use App\Presentation\Http\HttpResponse;
+use DateTime;
 
 class StoreMovieController {
   public function __construct(private CreateMovieUseCase $useCase) {}
@@ -19,6 +20,8 @@ class StoreMovieController {
       $validationException = MovieControllerValidations::createMovieValidations(array_keys($request->body))->validate($request->body);
 
       if($validationException) throw $validationException;
+
+      $request->body["releaseDate"] = DateTime::createFromFormat("Y-m-d", $request->body["releaseDate"]);
 
       $inputDto = new CreateMovieInputDTO(
         $request->body['title'],

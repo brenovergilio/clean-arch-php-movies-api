@@ -22,7 +22,7 @@ it('should return 400 status code because CPF is invalid', function() {
   ];
   $httpRequest = new HttpRequest($body);
 
-  $result = $this->sut->update('id', $httpRequest);
+  $result = $this->sut->update($httpRequest);
   expect($result->statusCode)->toBe(HttpStatusCodes::BAD_REQUEST);
   expect($result->body['error'])->toBe("Field cpf is invalid");
 });
@@ -34,7 +34,7 @@ it('should return 400 status code because email is invalid', function() {
   ];
   $httpRequest = new HttpRequest($body);
 
-  $result = $this->sut->update('id', $httpRequest);
+  $result = $this->sut->update($httpRequest);
   expect($result->statusCode)->toBe(HttpStatusCodes::BAD_REQUEST);
   expect($result->body['error'])->toBe("Field email is invalid");
 });
@@ -44,7 +44,7 @@ it('should return 409 status code because use case thrown DuplicatedUniqueFieldE
   $this->updateUserUseCaseMock->shouldReceive('execute')->andThrow(new DuplicatedUniqueFieldException("field"));
   $httpRequest = new HttpRequest($body);
 
-  $result = $this->sut->update('id', $httpRequest);
+  $result = $this->sut->update($httpRequest);
   expect($result->statusCode)->toBe(HttpStatusCodes::CONFLICT);
   expect($result->body['error'])->toBe("Field field is already in use");
 });
@@ -54,7 +54,7 @@ it('should return 404 status code because use case thrown EntityNotFoundExceptio
   $this->updateUserUseCaseMock->shouldReceive('execute')->andThrow(new EntityNotFoundException("Entity"));
   $httpRequest = new HttpRequest($body);
 
-  $result = $this->sut->update('id', $httpRequest);
+  $result = $this->sut->update($httpRequest);
   expect($result->statusCode)->toBe(HttpStatusCodes::NOT_FOUND);
   expect($result->body['error'])->toBe("Entity Entity not found");
 });
@@ -64,7 +64,7 @@ it('should return 403 status code because use case thrown InsufficientPermission
   $this->updateUserUseCaseMock->shouldReceive('execute')->andThrow(new InsufficientPermissionsException());
   $httpRequest = new HttpRequest($body);
 
-  $result = $this->sut->update('id', $httpRequest);
+  $result = $this->sut->update($httpRequest);
   expect($result->statusCode)->toBe(HttpStatusCodes::FORBIDDEN);
   expect($result->body['error'])->toBe("Insufficient Permissions");
 });
@@ -74,7 +74,7 @@ it('should return 204 status code in case of success', function() {
   $this->updateUserUseCaseMock->shouldReceive('execute')->once();
   $httpRequest = new HttpRequest($body);
 
-  $result = $this->sut->update('id', $httpRequest);
+  $result = $this->sut->update($httpRequest);
   expect($result->statusCode)->toBe(HttpStatusCodes::NO_CONTENT);
   expect($result->body)->toBeNull();
 });
