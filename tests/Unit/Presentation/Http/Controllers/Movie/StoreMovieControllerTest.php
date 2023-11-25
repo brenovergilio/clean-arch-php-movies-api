@@ -79,7 +79,7 @@ it('should return 400 status code because required field releaseDate is missing'
     "synopsis" => "synopsis",
     "directorName" => "directorName",
     "genre" => "comedy",
-    "isPublic" => true
+    "isPublic" => "true"
   ];
   $httpRequest = new HttpRequest($body);
 
@@ -94,7 +94,7 @@ it('should return 403 status code because use case thrown InsufficientPermission
     "synopsis" => "synopsis",
     "directorName" => "directorName",
     "genre" => "comedy",
-    "isPublic" => true,
+    "isPublic" => "true",
     "releaseDate" => "2000-01-01"
   ];
   $httpRequest = new HttpRequest($body);
@@ -112,7 +112,7 @@ it('should return 201 status code in case of success', function() {
     "synopsis" => "synopsis",
     "directorName" => "directorName",
     "genre" => "comedy",
-    "isPublic" => true,
+    "isPublic" => "true",
     "releaseDate" => "2000-01-01"
   ];
   
