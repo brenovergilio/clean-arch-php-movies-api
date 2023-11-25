@@ -15,6 +15,8 @@ class EloquentMovieRepository implements MovieRepository {
       $eloquentMovie->refresh();
       return $eloquentMovie->mapToDomain();
     }
+
+    return null;
   }
 
   public function update(Movie $movie, bool $returning = false): ?Movie {
@@ -26,6 +28,8 @@ class EloquentMovieRepository implements MovieRepository {
       $eloquentMovie->refresh();
       return $eloquentMovie->mapToDomain();
     }
+
+    return null;
   }
 
   public function findByID(string|int $id): ?Movie {

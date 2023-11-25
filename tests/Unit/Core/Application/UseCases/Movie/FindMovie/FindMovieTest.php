@@ -3,11 +3,13 @@ use App\Core\Application\UseCases\Movie\FindMovie\DTO\FindMovieInputDTO;
 use App\Core\Application\UseCases\Movie\FindMovie\FindMovieUseCase;
 use App\Core\Domain\Entities\Movie\MovieRepository;
 use App\Models\MovieModel;
+use App\Models\UserModel;
 
 beforeEach(function() {
   $this->movieRepositoryMock = Mockery::mock(MovieRepository::class);
   $this->inputDto = new FindMovieInputDTO('id');
-  $this->sut = new FindMovieUseCase($this->movieRepositoryMock);
+  $this->loggedUser = UserModel::factory()->client()->makeOne()->mapToDomain();
+  $this->sut = new FindMovieUseCase($this->movieRepositoryMock, $this->loggedUser);
 });
 
 afterEach(function() {
@@ -17,6 +19,18 @@ afterEach(function() {
 
 it("should throw an EntityNotFoundException because movie does not exist", function() {
   $this->movieRepositoryMock->shouldReceive('findByID')->andReturn(null);
+
+  expect(function() {
+    $this->sut->execute($this->inputDto);
+  })->toThrow("Entity Movie not found");
+});
+
+it("should throw an EntityNotFoundException because movie is private and user did not confirm email", function() {
+  $movie = MovieModel::factory()->private()->makeOne()->mapToDomain();
+  $this->loggedUser = UserModel::factory()->client()->unverified()->makeOne()->mapToDomain();
+  $this->sut = new FindMovieUseCase($this->movieRepositoryMock, $this->loggedUser);
+
+  $this->movieRepositoryMock->shouldReceive('findByID')->andReturn($movie);
 
   expect(function() {
     $this->sut->execute($this->inputDto);
