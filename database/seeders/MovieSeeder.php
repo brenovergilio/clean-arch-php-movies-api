@@ -21,6 +21,7 @@ class MovieSeeder extends Seeder
             'release_date' => '2008-07-14',
             'genre' => 'action',
             'is_public' => true,
+            'cover' => null
         ]);
 
         MovieModel::factory()->createOne([
@@ -30,6 +31,7 @@ class MovieSeeder extends Seeder
             'release_date' => '1999-03-24',
             'genre' => 'action',
             'is_public' => false,
+            'cover' => null
         ]);
 
         //Genre: HORROR
@@ -40,6 +42,7 @@ class MovieSeeder extends Seeder
             'release_date' => '2013-07-15',
             'genre' => 'horror',
             'is_public' => true,
+            'cover' => null
         ]);
 
         MovieModel::factory()->createOne([
@@ -49,6 +52,7 @@ class MovieSeeder extends Seeder
             'release_date' => '2002-04-26',
             'genre' => 'horror',
             'is_public' => false,
+            'cover' => null
         ]);
 
         //Genre: DRAMA
@@ -59,6 +63,7 @@ class MovieSeeder extends Seeder
             'release_date' => '1994-06-23',
             'genre' => 'drama',
             'is_public' => true,
+            'cover' => null
         ]);
 
         MovieModel::factory()->createOne([
@@ -68,6 +73,7 @@ class MovieSeeder extends Seeder
             'release_date' => '1972-03-14',
             'genre' => 'drama',
             'is_public' => false,
+            'cover' => null
         ]);
 
         //Genre: ROMANCE
@@ -78,6 +84,7 @@ class MovieSeeder extends Seeder
             'release_date' => '2016-03-23',
             'genre' => 'romance',
             'is_public' => true,
+            'cover' => null
         ]);
 
         MovieModel::factory()->createOne([
@@ -87,6 +94,7 @@ class MovieSeeder extends Seeder
             'release_date' => '2023-06-23',
             'genre' => 'romance',
             'is_public' => false,
+            'cover' => null
         ]);
 
         //Genre: COMEDY
@@ -97,6 +105,7 @@ class MovieSeeder extends Seeder
             'release_date' => '2023-08-03',
             'genre' => 'comedy',
             'is_public' => true,
+            'cover' => null
         ]);
 
         MovieModel::factory()->createOne([
@@ -106,6 +115,7 @@ class MovieSeeder extends Seeder
             'release_date' => '2009-06-02',
             'genre' => 'comedy',
             'is_public' => false,
+            'cover' => null
         ]);
 
         //Genre: FANTASY
@@ -116,6 +126,7 @@ class MovieSeeder extends Seeder
             'release_date' => '2008-05-16',
             'genre' => 'fantasy',
             'is_public' => true,
+            'cover' => null
         ]);
 
         MovieModel::factory()->createOne([
@@ -125,6 +136,7 @@ class MovieSeeder extends Seeder
             'release_date' => '2001-11-11',
             'genre' => 'fantasy',
             'is_public' => false,
+            'cover' => null
         ]);
     }
 }

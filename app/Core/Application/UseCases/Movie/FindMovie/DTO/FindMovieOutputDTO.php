@@ -15,5 +15,11 @@ class FindMovieOutputDTO {
     public bool $isPublic,
     public DateTime $releaseDate,
     public DateTime $addedAt
-  ) {}
+  ) {
+     if(isset($cover)) {
+      // Simulate a cloud URL
+      $baseUrl = env("APP_URL");
+      $this->cover = "$baseUrl/api/movies/$id/cover";
+     }
+  }
 }

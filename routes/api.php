@@ -11,6 +11,8 @@ use App\Infra\Factories\UseCases\User\CreateUserUseCaseFactory;
 use App\Infra\Factories\UseCases\User\FindUserUseCaseFactory;
 use App\Infra\Factories\UseCases\User\UpdateUserUseCaseFactory;
 use App\Infra\Storage\LaravelUploadableFile;
+use App\Models\MovieModel;
+use App\Models\UserModel;
 use App\Presentation\Http\Controllers\Auth\LoginController;
 use App\Presentation\Http\Controllers\Movie\DeleteMovieController;
 use App\Presentation\Http\Controllers\Movie\FindMovieController;
@@ -22,8 +24,10 @@ use App\Presentation\Http\Controllers\User\FindUserController;
 use App\Presentation\Http\Controllers\User\StoreUserController;
 use App\Presentation\Http\Controllers\User\UpdateUserController;
 use App\Presentation\Http\HttpRequest;
+use App\Presentation\Http\HttpStatusCodes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,7 +57,7 @@ Route::post('/login', function (Request $request) {
 });
 
 //User
-Route::get('/user/{id}', function (string|int $id) {
+Route::get('/users/{id}', function (string|int $id) {
     $findUserUseCase = FindUserUseCaseFactory::make();
     $controller = new FindUserController($findUserUseCase);
 
@@ -62,7 +66,7 @@ Route::get('/user/{id}', function (string|int $id) {
     return response()->json($result->body, $result->statusCode->value);
 });
 
-Route::post('/user', function (Request $request) {
+Route::post('/users', function (Request $request) {
     $createUserUseCase = CreateUserUseCaseFactory::make();
     $controller = new StoreUserController($createUserUseCase);
 
@@ -74,7 +78,7 @@ Route::post('/user', function (Request $request) {
     return response()->json($result->body, $result->statusCode->value);
 });
 
-Route::patch('/user/confirm-email', function (Request $request) {
+Route::patch('/users/confirm-email', function (Request $request) {
     $confirmEmailUseCase = ConfirmEmailUseCaseFactory::make();
     $controller = new ConfirmEmailUserController($confirmEmailUseCase);
 
@@ -84,7 +88,7 @@ Route::patch('/user/confirm-email', function (Request $request) {
     return response()->json($result->body, $result->statusCode->value);
 });
 
-Route::patch('/user/change-password', function (Request $request) {
+Route::patch('/users/change-password', function (Request $request) {
     $loggedUser = auth()->user()->mapToDomain();
     $changePasswordUseCase = ChangePasswordUseCaseFactory::make($loggedUser);
     $controller = new ChangePasswordUserController($changePasswordUseCase);
@@ -95,7 +99,7 @@ Route::patch('/user/change-password', function (Request $request) {
     return response()->json($result->body, $result->statusCode->value);
 })->middleware('jwt.auth');
 
-Route::post('/user/update', function (Request $request) {
+Route::post('/users/update', function (Request $request) {
     $loggedUser = auth()->user()->mapToDomain();
     $updateUserUseCase = UpdateUserUseCaseFactory::make($loggedUser);
     $controller = new UpdateUserController($updateUserUseCase);
@@ -109,7 +113,7 @@ Route::post('/user/update', function (Request $request) {
 })->middleware('jwt.auth');
 
 //Movie
-Route::get('/movie/{id}', function (string|int $id) {
+Route::get('/movies/{id}', function (string|int $id) {
     $loggedUser = auth()->user()->mapToDomain();
     $findMovieUseCase = FindMovieUseCaseFactory::make($loggedUser);
     $controller = new FindMovieController($findMovieUseCase);
@@ -119,7 +123,7 @@ Route::get('/movie/{id}', function (string|int $id) {
     return response()->json($result->body, $result->statusCode->value);
 })->middleware('jwt.auth');
 
-Route::delete('/movie/{id}', function (string|int $id) {
+Route::delete('/movies/{id}', function (string|int $id) {
     $loggedUser = auth()->user()->mapToDomain();
     $deleteMovieUseCase = DeleteMovieUseCaseFactory::make($loggedUser);
     $controller = new DeleteMovieController($deleteMovieUseCase);
@@ -129,7 +133,7 @@ Route::delete('/movie/{id}', function (string|int $id) {
     return response()->json($result->body, $result->statusCode->value);
 })->middleware('jwt.auth');
 
-Route::post('/movie', function (Request $request) {
+Route::post('/movies', function (Request $request) {
     $loggedUser = auth()->user()->mapToDomain();
     $createMovieUseCase = CreateMovieUseCaseFactory::make($loggedUser);
     $controller = new StoreMovieController($createMovieUseCase);
@@ -143,7 +147,7 @@ Route::post('/movie', function (Request $request) {
     return response()->json($result->body, $result->statusCode->value);
 })->middleware('jwt.auth');
 
-Route::post('/movie/{id}', function (string|int $id, Request $request) {
+Route::post('/movies/{id}', function (string|int $id, Request $request) {
     $loggedUser = auth()->user()->mapToDomain();
     $updateMovieUseCase = UpdateMovieUseCaseFactory::make($loggedUser);
     $controller = new UpdateMovieController($updateMovieUseCase);
@@ -155,4 +159,32 @@ Route::post('/movie/{id}', function (string|int $id, Request $request) {
     $result = $controller->update($id, $httpRequest);
 
     return response()->json($result->body, $result->statusCode->value);
+})->middleware('jwt.auth');
+
+// Routes to simulate cloud calls to retrieve files
+// Get User Profile Photo
+Route::get('/users/{id}/photo', function(string|int $id) {
+    $user = UserModel::find($id);
+    if ($user && $user->photo && Storage::exists($user->photo)) {
+      $response = response()->file(Storage::path($user->photo), ["Cache-Control" => "no-cache"]);
+      return $response;
+    }
+    return response()->json(["error" => "No profile photo found"], HttpStatusCodes::NOT_FOUND->value);
+});
+
+// Get Movie Cover Photo
+Route::get('/movies/{id}/cover', function(string|int $id) {
+    $loggedUser = auth()->user()->mapToDomain();
+
+    if(!$loggedUser->isEmailConfirmed()) {
+        return response()->json(["error" => "Forbidden Resource"], HttpStatusCodes::FORBIDDEN->value);
+    }
+
+    $movie = MovieModel::find($id);
+
+    if ($movie && $movie->cover && Storage::exists($movie->cover)) {
+      $response = response()->file(Storage::path($movie->cover), ["Cache-Control" => "no-cache"]);
+      return $response;
+    }
+    return response()->json(["error" => "No cover photo found"], HttpStatusCodes::NOT_FOUND->value);
 })->middleware('jwt.auth');

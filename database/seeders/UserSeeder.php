@@ -17,7 +17,6 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        info($this->bcryptHandler->generate('password'));
         UserModel::factory()->createOne([
             'name' => 'Administrator',
             'email' => 'admin@mail.com',

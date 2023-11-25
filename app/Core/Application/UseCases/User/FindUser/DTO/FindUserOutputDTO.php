@@ -9,5 +9,11 @@ class FindUserOutputDTO {
     public ?string $cpf,
     public string $email,
     public ?string $photo
-  ) {}
+  ) {
+    if(isset($photo)) {
+      // Simulate a cloud URL
+      $baseUrl = env("APP_URL");
+      $this->photo = "$baseUrl/api/users/$id/photo";
+    }
+  }
 }
