@@ -2,7 +2,6 @@
 
 namespace App\Presentation\Validations;
 use App\Core\Domain\Exceptions\InvalidFieldException;
-use App\Core\Domain\Exceptions\WeakPasswordException;
 use App\Presentation\Validations\Interfaces\Validation;
 use Exception;
 
