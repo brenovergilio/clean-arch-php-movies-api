@@ -4,6 +4,7 @@ use App\Infra\Factories\UseCases\Auth\LoginUseCaseFactory;
 use App\Infra\Factories\UseCases\Movie\CreateMovieUseCaseFactory;
 use App\Infra\Factories\UseCases\Movie\DeleteMovieUseCaseFactory;
 use App\Infra\Factories\UseCases\Movie\FindMovieUseCaseFactory;
+use App\Infra\Factories\UseCases\Movie\UpdateMovieUseCaseFactory;
 use App\Infra\Factories\UseCases\User\ChangePasswordUseCaseFactory;
 use App\Infra\Factories\UseCases\User\ConfirmEmailUseCaseFactory;
 use App\Infra\Factories\UseCases\User\CreateUserUseCaseFactory;
@@ -14,6 +15,7 @@ use App\Presentation\Http\Controllers\Auth\LoginController;
 use App\Presentation\Http\Controllers\Movie\DeleteMovieController;
 use App\Presentation\Http\Controllers\Movie\FindMovieController;
 use App\Presentation\Http\Controllers\Movie\StoreMovieController;
+use App\Presentation\Http\Controllers\Movie\UpdateMovieController;
 use App\Presentation\Http\Controllers\User\ChangePasswordUserController;
 use App\Presentation\Http\Controllers\User\ConfirmEmailUserController;
 use App\Presentation\Http\Controllers\User\FindUserController;
@@ -135,9 +137,24 @@ Route::post('/movie', function (Request $request) {
     $httpRequest = new HttpRequest($request->all());
 
     if($request->hasFile("cover")) $httpRequest->body["cover"] = new LaravelUploadableFile($request->file("cover"));
-    if($httpRequest->body["releaseDate"]) $httpRequest->body["releaseDate"] = DateTime::createFromFormat("Y-m-d", $httpRequest->body["releaseDate"]);
+    if($request->has("releaseDate")) $httpRequest->body["releaseDate"] = DateTime::createFromFormat("Y-m-d", $httpRequest->body["releaseDate"]);
 
     $result = $controller->store($httpRequest);
+
+    return response()->json($result->body, $result->statusCode->value);
+})->middleware('jwt.auth');
+
+Route::post('/movie/{id}', function (string|int $id, Request $request) {
+    $loggedUser = auth()->user()->mapToDomain();
+    $updateMovieUseCase = UpdateMovieUseCaseFactory::make($loggedUser);
+    $controller = new UpdateMovieController($updateMovieUseCase);
+
+    $httpRequest = new HttpRequest($request->all());
+
+    if($request->hasFile("cover")) $httpRequest->body["cover"] = new LaravelUploadableFile($request->file("cover"));
+    if($request->has("releaseDate")) $httpRequest->body["releaseDate"] = DateTime::createFromFormat("Y-m-d", $httpRequest->body["releaseDate"]);
+
+    $result = $controller->update($id, $httpRequest);
 
     return response()->json($result->body, $result->statusCode->value);
 })->middleware('jwt.auth');
