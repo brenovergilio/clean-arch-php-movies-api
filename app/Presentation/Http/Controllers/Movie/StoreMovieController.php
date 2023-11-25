@@ -4,6 +4,7 @@ namespace App\Presentation\Http\Controllers\Movie;
 use App\Core\Application\Exceptions\InsufficientPermissionsException;
 use App\Core\Application\UseCases\Movie\CreateMovie\CreateMovieUseCase;
 use App\Core\Application\UseCases\Movie\CreateMovie\DTO\CreateMovieInputDTO;
+use App\Core\Domain\Exceptions\InvalidFieldException;
 use App\Core\Domain\Exceptions\MissingRequiredFieldException;
 use App\Models\MovieModel;
 use App\Presentation\Http\Controllers\Movie\MovieControllerValidations;
@@ -36,6 +37,8 @@ class StoreMovieController {
       $this->useCase->execute($inputDto);
       return new HttpResponse(null, HttpStatusCodes::CREATED);
     } catch (MissingRequiredFieldException $exception) {
+      return new HttpResponse(["error" => $exception->getMessage()], HttpStatusCodes::BAD_REQUEST);
+    } catch (InvalidFieldException $exception) {
       return new HttpResponse(["error" => $exception->getMessage()], HttpStatusCodes::BAD_REQUEST);
     } catch (InsufficientPermissionsException $exception) {
       return new HttpResponse(["error" => $exception->getMessage()], HttpStatusCodes::FORBIDDEN);

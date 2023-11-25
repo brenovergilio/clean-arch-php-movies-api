@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Presentation\Http\Controllers\Auth;
+use App\Presentation\Validations\PrimitiveTypeValidation;
 use App\Presentation\Validations\RequiredFieldValidation;
 use App\Presentation\Validations\ValidationComposite;
 use App\Presentation\Validations\EmailValidation;
@@ -16,6 +17,7 @@ class AuthControllerValidations {
     }
 
     $validations[] = new EmailValidation('email', new EmailValidatorAdapter());
+    $validations[] = new PrimitiveTypeValidation('password', 'string');
 
     return new ValidationComposite($validations);
   }

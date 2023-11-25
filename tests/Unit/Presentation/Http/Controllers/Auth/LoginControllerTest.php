@@ -49,6 +49,19 @@ it('should return 400 status code because email is not valid', function () {
   expect($result->body["error"])->toBe("Field email is invalid");
 });
 
+it('should return 400 status code because email is not a string', function () {
+  $body = [
+    "email" => "email@mail.com",
+    "password" => 123
+  ];
+
+  $httpRequest = new HttpRequest($body);
+
+  $result = $this->sut->login($httpRequest);
+  expect($result->statusCode)->toBe(HttpStatusCodes::BAD_REQUEST);
+  expect($result->body["error"])->toBe("Field password is invalid");
+});
+
 it('should return 401 status code because use case thrown InvalidCredentialsException', function () {
   $body = [
     "email" => "email@mail.com",

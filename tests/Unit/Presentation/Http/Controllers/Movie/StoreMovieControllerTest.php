@@ -79,7 +79,7 @@ it('should return 400 status code because required field releaseDate is missing'
     "synopsis" => "synopsis",
     "directorName" => "directorName",
     "genre" => "comedy",
-    "isPublic" => "true"
+    "isPublic" => true
   ];
   $httpRequest = new HttpRequest($body);
 
@@ -88,13 +88,126 @@ it('should return 400 status code because required field releaseDate is missing'
   expect($result->body['error'])->toBe("Field releaseDate is missing");
 });
 
+it('should return 400 status code because title is not a string', function() {
+  $body = [
+    "title" => 123,
+    "synopsis" => "synopsis",
+    "directorName" => "directorName",
+    "genre" => "comedy",
+    "isPublic" => true,
+    "releaseDate" => "2000-01-01",
+  ];
+  $httpRequest = new HttpRequest($body);
+
+  $result = $this->sut->store($httpRequest);
+  expect($result->statusCode)->toBe(HttpStatusCodes::BAD_REQUEST);
+  expect($result->body['error'])->toBe("Field title is invalid");
+});
+
+it('should return 400 status code because synopsis is not a string', function() {
+  $body = [
+    "title" => "title",
+    "synopsis" => 123,
+    "directorName" => "directorName",
+    "genre" => "comedy",
+    "isPublic" => true,
+    "releaseDate" => "2000-01-01",
+  ];
+  $httpRequest = new HttpRequest($body);
+
+  $result = $this->sut->store($httpRequest);
+  expect($result->statusCode)->toBe(HttpStatusCodes::BAD_REQUEST);
+  expect($result->body['error'])->toBe("Field synopsis is invalid");
+});
+
+it('should return 400 status code because directorName is not a string', function() {
+  $body = [
+    "title" => "title",
+    "synopsis" => "synopsis",
+    "directorName" => 123,
+    "genre" => "comedy",
+    "isPublic" => true,
+    "releaseDate" => "2000-01-01",
+  ];
+  $httpRequest = new HttpRequest($body);
+
+  $result = $this->sut->store($httpRequest);
+  expect($result->statusCode)->toBe(HttpStatusCodes::BAD_REQUEST);
+  expect($result->body['error'])->toBe("Field directorName is invalid");
+});
+
+it('should return 400 status code because genre is not a valid enum', function() {
+  $body = [
+    "title" => "title",
+    "synopsis" => "synopsis",
+    "directorName" => "directorName",
+    "genre" => "invalidGenre",
+    "isPublic" => true,
+    "releaseDate" => "2000-01-01",
+  ];
+  $httpRequest = new HttpRequest($body);
+
+  $result = $this->sut->store($httpRequest);
+  expect($result->statusCode)->toBe(HttpStatusCodes::BAD_REQUEST);
+  expect($result->body['error'])->toBe("Field genre is invalid");
+});
+
+it('should return 400 status code because isPublic is not a bool', function() {
+  $body = [
+    "title" => "title",
+    "synopsis" => "synopsis",
+    "directorName" => "directorName",
+    "genre" => "comedy",
+    "isPublic" => "invalidBool",
+    "releaseDate" => "2000-01-01",
+  ];
+  $httpRequest = new HttpRequest($body);
+
+  $result = $this->sut->store($httpRequest);
+  expect($result->statusCode)->toBe(HttpStatusCodes::BAD_REQUEST);
+  expect($result->body['error'])->toBe("Field isPublic is invalid");
+});
+
+it('should return 400 status code because releaseDate is not a valid dateTime', function() {
+  $body = [
+    "title" => "title",
+    "synopsis" => "synopsis",
+    "directorName" => "directorName",
+    "genre" => "comedy",
+    "isPublic" => true,
+    "releaseDate" => "invalidDateTime"
+  ];
+  $httpRequest = new HttpRequest($body);
+
+  $result = $this->sut->store($httpRequest);
+  expect($result->statusCode)->toBe(HttpStatusCodes::BAD_REQUEST);
+  expect($result->body['error'])->toBe("Field releaseDate is invalid");
+});
+
+it('should return 400 status code because cover is not a instance of UploadableFile', function() {
+  $body = [
+    "title" => "title",
+    "synopsis" => "synopsis",
+    "directorName" => "directorName",
+    "genre" => "comedy",
+    "isPublic" => true,
+    "releaseDate" => "2000-01-01",
+    "cover" => "invalid"
+  ];
+  $httpRequest = new HttpRequest($body);
+
+  $result = $this->sut->store($httpRequest);
+  expect($result->statusCode)->toBe(HttpStatusCodes::BAD_REQUEST);
+  expect($result->body['error'])->toBe("Field cover is invalid");
+});
+
 it('should return 403 status code because use case thrown InsufficientPermissionsException', function() {
   $body = [
     "title" => "title",
     "synopsis" => "synopsis",
     "directorName" => "directorName",
     "genre" => "comedy",
-    "isPublic" => "true",
+    "isPublic" => true,
     "releaseDate" => "2000-01-01"
   ];
   $httpRequest = new HttpRequest($body);
@@ -112,7 +225,7 @@ it('should return 201 status code in case of success', function() {
     "synopsis" => "synopsis",
     "directorName" => "directorName",
     "genre" => "comedy",
-    "isPublic" => "true",
+    "isPublic" => true,
     "releaseDate" => "2000-01-01"
   ];
   
