@@ -7,10 +7,11 @@ use App\Core\Domain\Protocols\PaginationProps;
 
 class FilterMovies {
   public function __construct(
-    public ?string $fieldName
+    public ?string $fieldName,
+    public ?bool $isPublic
   ) {
     
-    if($fieldName && !in_array($fieldName, ["title", "synopsis", "directorName", "genre", "isPublic"])) {
+    if($fieldName && !in_array($fieldName, ["title", "synopsis", "directorName", "genre"])) {
       $fieldName = null;
     }
   }
