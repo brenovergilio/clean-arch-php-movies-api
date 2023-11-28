@@ -130,7 +130,6 @@ Route::get('/movies', function (Request $request) {
     $findManyMoviesUseCase = FindManyMoviesUseCaseFactory::make($loggedUser);
     $controller = new FindManyMoviesController($findManyMoviesUseCase);
     $httpRequest = new HttpRequest([], $request->query());
-    info(json_encode($httpRequest));
 
     $result = $controller->index($httpRequest);
 

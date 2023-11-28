@@ -31,7 +31,7 @@ class FindManyMoviesController {
         }
 
         $paginationProps = new PaginationProps(intval($request->queryParams["page"]), intval($request->queryParams["perPage"]));
-        $orderProps = new OrderMovies($this->generateOrderProps($request->queryParams["ordering"]));
+        $orderProps = new OrderMovies($this->generateOrderProps($request->queryParams["ordering"] ?? null));
         $filterProps = new FilterMovies($request->queryParams["fieldValue"] ?? null, $isPublicFilter);
         
         $inputDto = new FindManyMoviesInputDTO(
@@ -54,7 +54,7 @@ class FindManyMoviesController {
     /**
     * @return OrderByProps[]
     */
-    private function generateOrderProps(string $input): array {
+    private function generateOrderProps(?string $input): array {
       if(!$input || strlen($input) === 0) return [];
 
       $fields = explode(",", $input);

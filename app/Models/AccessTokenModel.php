@@ -11,8 +11,11 @@ class AccessTokenModel extends Model
 {
     use HasFactory;
 
+    public $timestamps = true;
     protected $table = "access_tokens";
     protected $primaryKey = "token";
+    public $incrementing = false;
+
 
     /**
      * The attributes that are mass assignable.
@@ -23,7 +26,7 @@ class AccessTokenModel extends Model
         'token',
         'time_to_leave',
         'user_id',
-        'intent'
+        'intent',
     ];
 
     /**
@@ -32,6 +35,7 @@ class AccessTokenModel extends Model
      * @var array<string, string>
      */
     protected $casts = [
+        'token' => 'string',
         'time_to_leave' => 'int'
     ];
 

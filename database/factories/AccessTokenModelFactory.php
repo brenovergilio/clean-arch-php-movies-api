@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 use App\Core\Domain\Helpers;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\UserModel>
  */
 class AccessTokenModelFactory extends Factory
 {
@@ -25,7 +25,7 @@ class AccessTokenModelFactory extends Factory
         $user = UserModel::factory()->createOne();
 
         return [
-            'token' => Str::random(6),
+            'token' => strtoupper(Str::random(6)),
             'time_to_leave' => Helpers::ONE_HOUR_IN_SECONDS,
             'user_id' => $user->id,
             'intent' => AccessTokenModel::mapIntentToModel(AccessTokenIntent::CONFIRM_EMAIL),

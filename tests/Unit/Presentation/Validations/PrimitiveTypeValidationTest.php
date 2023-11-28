@@ -12,7 +12,7 @@ it('should return an InvalidFieldException because input is not a string', funct
 
 it('should return an InvalidFieldException because input is not a int', function() {
   $sut = new PrimitiveTypeValidation("field", "int");
-  $input = ["field" => "123"];
+  $input = ["field" => "abc"];
   $result = $sut->validate($input);
   
   expect($result)->toBeInstanceOf(InvalidFieldException::class);
@@ -20,7 +20,7 @@ it('should return an InvalidFieldException because input is not a int', function
 
 it('should return an InvalidFieldException because input is not a float', function() {
   $sut = new PrimitiveTypeValidation("field", "float");
-  $input = ["field" => "123"];
+  $input = ["field" => "abc"];
   $result = $sut->validate($input);
   
   expect($result)->toBeInstanceOf(InvalidFieldException::class);
@@ -28,7 +28,7 @@ it('should return an InvalidFieldException because input is not a float', functi
 
 it('should return an InvalidFieldException because input is not a bool', function() {
   $sut = new PrimitiveTypeValidation("field", "bool");
-  $input = ["field" => "123"];
+  $input = ["field" => "abc"];
   $result = $sut->validate($input);
   
   expect($result)->toBeInstanceOf(InvalidFieldException::class);

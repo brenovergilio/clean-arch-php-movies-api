@@ -40,7 +40,7 @@ it('should return 400 status code because required field perPage is missing', fu
 
 it('should return 400 status code because page is not an integer', function() {
   $httpRequest = new HttpRequest([], [
-    "page" => "123",
+    "page" => "abc",
     "perPage" => 12
   ]);
 
@@ -63,7 +63,7 @@ it('should return 400 status code because page is negative', function() {
 it('should return 400 status code because perPage is not an integer', function() {
   $httpRequest = new HttpRequest([], [
     "page" => 1,
-    "perPage" => "123"
+    "perPage" => "abc"
   ]);
 
   $result = $this->sut->index($httpRequest);
@@ -124,22 +124,22 @@ it('should call use case with right values and return what it return', function(
     "perPage" => 12,
     "fieldValue" => "fieldValue",
     "isPublic" => true,
-    "ordering" => "title,-synopsis"
+    "ordering" => "title,-addedAt"
   ]);
 
   $outputDto = new FindManyMoviesOutputDTO([], new PaginationProps(1, 10));
   $this->findManyMoviesUseCaseMock->shouldReceive('execute')->with(Mockery::on(function ($argument) {
-    return $argument->paginationProps->page === 1;
-          //  $argument->paginationProps->perPage === 12 &&
-          //  $argument->filterMoviesProps->fieldValue === "fieldValue" &&
-          //  $argument->filterMoviesProps->isPublic === true &&
-          //  $argument->orderMoviesProps->orderByProps[0]->fieldName === "title" &&
-          //  $argument->orderMoviesProps->orderByProps[0]->direction === OrderDirection::ASC &&
-          //  $argument->orderMoviesProps->orderByProps[1]->fieldName === "synopsis" &&
-          //  $argument->orderMoviesProps->orderByProps[1]->direction === OrderDirection::DESC;
+    return $argument->paginationProps->page === 1 &&
+           $argument->paginationProps->perPage === 12 &&
+           $argument->filterMoviesProps->fieldValue === "fieldValue" &&
+           $argument->filterMoviesProps->isPublic === true &&
+           $argument->orderMoviesProps->orderByProps[0]->fieldName === "title" &&
+           $argument->orderMoviesProps->orderByProps[0]->direction === OrderDirection::ASC &&
+           $argument->orderMoviesProps->orderByProps[1]->fieldName === "addedAt" &&
+           $argument->orderMoviesProps->orderByProps[1]->direction === OrderDirection::DESC;
   }))->andReturn($outputDto);
 
   $result = $this->sut->index($httpRequest);
   expect($result->statusCode)->toBe(HttpStatusCodes::OK);
-  expect($result->body['data']['data'])->toBe($outputDto);
+  expect($result->body['data'])->toBe($outputDto);
 });
