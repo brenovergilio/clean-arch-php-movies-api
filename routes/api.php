@@ -3,6 +3,7 @@
 use App\Infra\Factories\UseCases\Auth\LoginUseCaseFactory;
 use App\Infra\Factories\UseCases\Movie\CreateMovieUseCaseFactory;
 use App\Infra\Factories\UseCases\Movie\DeleteMovieUseCaseFactory;
+use App\Infra\Factories\UseCases\Movie\FindManyMoviesUseCaseFactory;
 use App\Infra\Factories\UseCases\Movie\FindMovieUseCaseFactory;
 use App\Infra\Factories\UseCases\Movie\UpdateMovieUseCaseFactory;
 use App\Infra\Factories\UseCases\User\ChangePasswordUseCaseFactory;
@@ -15,6 +16,7 @@ use App\Models\MovieModel;
 use App\Models\UserModel;
 use App\Presentation\Http\Controllers\Auth\LoginController;
 use App\Presentation\Http\Controllers\Movie\DeleteMovieController;
+use App\Presentation\Http\Controllers\Movie\FindManyMoviesController;
 use App\Presentation\Http\Controllers\Movie\FindMovieController;
 use App\Presentation\Http\Controllers\Movie\StoreMovieController;
 use App\Presentation\Http\Controllers\Movie\UpdateMovieController;
@@ -122,6 +124,18 @@ Route::get('/movies/{id}', function (string|int $id) {
 
     return response()->json($result->body, $result->statusCode->value);
 })->middleware('jwt.auth');
+
+Route::get('/movies', function (Request $request) {
+    $loggedUser = auth()->user()->mapToDomain();
+    $findManyMoviesUseCase = FindManyMoviesUseCaseFactory::make($loggedUser);
+    $controller = new FindManyMoviesController($findManyMoviesUseCase);
+    $httpRequest = new HttpRequest([], $request->query());
+    info(json_encode($httpRequest));
+
+    $result = $controller->index($httpRequest);
+
+    return response()->json($result->body, $result->statusCode->value);
+})->middleware("jwt.auth");
 
 Route::delete('/movies/{id}', function (string|int $id) {
     $loggedUser = auth()->user()->mapToDomain();
