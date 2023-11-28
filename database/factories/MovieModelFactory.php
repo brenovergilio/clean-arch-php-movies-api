@@ -7,7 +7,7 @@ use App\Models\MovieModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\UserModel>
  */
 class MovieModelFactory extends Factory
 {
@@ -27,7 +27,7 @@ class MovieModelFactory extends Factory
             'cover' => fake()->filePath(),
             'is_public' => true,
             'release_date' => fake()->date(),
-            'created_at' => fake()->dateTime()
+            'created_at' => now()
         ];
     }
 

@@ -9,7 +9,7 @@ enum OrderDirection: string {
 
 class OrderByProps {
   public function __construct(
-    public string $fieldName,
+    public ?string $fieldName,
     public OrderDirection $direction
   ) {}
 }

@@ -7,14 +7,9 @@ use App\Core\Domain\Protocols\PaginationProps;
 
 class FilterMovies {
   public function __construct(
-    public ?string $fieldName,
+    public ?string $fieldValue,
     public ?bool $isPublic
-  ) {
-    
-    if($fieldName && !in_array($fieldName, ["title", "synopsis", "directorName", "genre"])) {
-      $fieldName = null;
-    }
-  }
+  ) {}
 }
 
 class OrderMovies {
@@ -25,7 +20,7 @@ class OrderMovies {
     public array $orderByProps
   ) {
     foreach($orderByProps as $props) {
-      if(!in_array($props, ["title", "genre", "isPublic", "releaseDate", "addedAt"])) {
+      if(!in_array($props->fieldName, ["title", "isPublic", "releaseDate", "addedAt"])) {
         $props->fieldName = null;
       }
     }
@@ -36,6 +31,6 @@ interface MovieRepository {
   public function create(Movie $movie, bool $returning = false): ?Movie;
   public function update(Movie $movie, bool $returning = false): ?Movie;
   public function findByID(string|int $id): ?Movie;
-  public function findMany(FilterMovies $filterProps, OrderMovies $orderProps, PaginationProps $paginationProps): PaginatedResult;
+  public function findMany(PaginationProps $paginationProps, ?FilterMovies $filterProps, ?OrderMovies $orderProps): PaginatedResult;
   public function delete(string|int $id): void;
 }

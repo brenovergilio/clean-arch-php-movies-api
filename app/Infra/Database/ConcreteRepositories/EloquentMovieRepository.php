@@ -48,23 +48,35 @@ class EloquentMovieRepository implements MovieRepository {
     MovieModel::destroy($id);
   }
 
-  public function findMany(FilterMovies $filterProps, OrderMovies $orderProps, PaginationProps $paginationProps): PaginatedResult {
+  public function findMany(PaginationProps $paginationProps, ?FilterMovies $filterProps, ?OrderMovies $orderProps): PaginatedResult {
     $moviesQuery = MovieModel::query();
 
-    $moviesQuery->when($filterProps->fieldName, function($query, $field) {
+    $moviesQuery->when($filterProps?->fieldValue, function($query, $field) {
       return 
         $query->where('title', 'like', "%$field%")
               ->orWhere('synopsis', 'like', "%$field%")
-              ->orWhere('directorName', 'like', "%$field%")
+              ->orWhere('director_name', 'like', "%$field%")
               ->orWhere('genre', 'like', "%$field%");
     });
 
-    if(isset($filterProps->isPublic)) {
-      $moviesQuery->where('isPublic', $filterProps->isPublic);
+    if(isset($filterProps?->isPublic)) {
+      $moviesQuery->where('is_public', $filterProps->isPublic);
     }
 
-    foreach($orderProps->orderByProps as $orderProps) {
-      $moviesQuery->orderBy($orderProps->fieldName, $orderProps->direction->value);
+    if($orderProps) {
+      foreach($orderProps->orderByProps as $orderByProps) {
+        if($orderByProps->fieldName) {
+          $fieldName = match($orderByProps->fieldName) {
+            "releaseDate" => "release_date",
+            "isPublic" => "is_public",
+            "addedAt" => "created_at",
+            "title" => "title",
+            "genre" => "genre"
+          };
+
+          $moviesQuery->orderBy($fieldName, $orderByProps->direction->value);
+        }
+      }
     }
 
     $eloquentPaginatedResult = $moviesQuery->paginate($paginationProps->perPage, ['*'], 'page', $paginationProps->page);

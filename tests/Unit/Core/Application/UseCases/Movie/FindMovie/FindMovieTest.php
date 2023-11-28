@@ -38,6 +38,7 @@ it("should throw an EntityNotFoundException because movie is private and user di
 });
 
 it("should return the movie", function() {
+  $appUrl = env("APP_URL", "");
   $movie = MovieModel::factory()->makeOne([
     "id" => 1
   ])->mapToDomain();
@@ -51,7 +52,7 @@ it("should return the movie", function() {
   expect($result->synopsis)->toBe($movie->synopsis());
   expect($result->directorName)->toBe($movie->directorName());
   expect($result->genre)->toBe($movie->genre());
-  expect($result->cover)->toBe($movie->cover());
+  expect($result->cover)->toBe("$appUrl/api/movies/1/cover");
   expect($result->isPublic)->toBe($movie->isPublic());
   expect($result->releaseDate)->toBe($movie->releaseDate());
   expect($result->addedAt)->toBe($movie->addedAt());

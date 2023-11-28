@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\MovieModel;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class MovieSeeder extends Seeder
@@ -102,7 +101,7 @@ class MovieSeeder extends Seeder
             'title' => "We're the Millers",
             'synopsis' => "A veteran pot dealer creates a fake family as part of his plan to move a huge shipment of weed into the U.S. from Mexico.",
             'director_name' => 'Rawson Marshall Thurber',
-            'release_date' => '2023-08-03',
+            'release_date' => '2013-08-07',
             'genre' => 'comedy',
             'is_public' => true,
             'cover' => null
