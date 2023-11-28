@@ -9,6 +9,7 @@ use App\Presentation\Validations\DateTimeValidation;
 use App\Presentation\Validations\InstanceOfValidation;
 use App\Presentation\Validations\IsEnumValidation;
 use App\Presentation\Validations\OrderInputValidation;
+use App\Presentation\Validations\PositiveNumberValidation;
 use App\Presentation\Validations\PrimitiveTypeValidation;
 use App\Presentation\Validations\RequiredFieldValidation;
 use App\Presentation\Validations\ValidationComposite;
@@ -52,10 +53,20 @@ class MovieControllerValidations {
 
   public static function findManyMoviesValidations(array $fields): ValidationComposite {
     $validations = [];
+    $validations[] = new RequiredFieldValidation('page');
+    $validations[] = new RequiredFieldValidation('perPage');
 
     foreach($fields as $field) {
-      if($field === "page") $validations[] = new PrimitiveTypeValidation('page', 'int');
-      if($field === "perPage") $validations[] = new PrimitiveTypeValidation('perPage', 'int');
+      if($field === "page") {
+        $validations[] = new PrimitiveTypeValidation('page', 'int');
+        $validations[] = new PositiveNumberValidation('page');
+      }
+      
+      if($field === "perPage") {
+        $validations[] = new PrimitiveTypeValidation('perPage', 'int');
+        $validations[] = new PositiveNumberValidation('perPage');
+      }
+
       if($field === "fieldValue") $validations[] = new PrimitiveTypeValidation('fieldValue', 'string');
       if($field === "isPublic") $validations[] = new PrimitiveTypeValidation('isPublic', 'bool');
       if($field === "ordering") $validations[] = new OrderInputValidation('ordering');

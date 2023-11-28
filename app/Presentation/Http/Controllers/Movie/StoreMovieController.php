@@ -6,6 +6,7 @@ use App\Core\Application\UseCases\Movie\CreateMovie\CreateMovieUseCase;
 use App\Core\Application\UseCases\Movie\CreateMovie\DTO\CreateMovieInputDTO;
 use App\Core\Domain\Exceptions\InvalidFieldException;
 use App\Core\Domain\Exceptions\MissingRequiredFieldException;
+use App\Core\Domain\Helpers;
 use App\Models\MovieModel;
 use App\Presentation\Http\Controllers\Movie\MovieControllerValidations;
 use App\Presentation\Http\HttpStatusCodes;
@@ -30,7 +31,7 @@ class StoreMovieController {
         $request->body['directorName'],
         MovieModel::mapGenreToDomain($request->body['genre']),
         $request->body['cover'] ?? null,
-        $request->body['isPublic'],
+        Helpers::convertStringBoolToPrimitive($request->body["isPublic"]),
         $request->body['releaseDate'],
       );
 

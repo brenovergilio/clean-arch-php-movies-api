@@ -202,3 +202,12 @@ Route::get('/movies/{id}/cover', function(string|int $id) {
     }
     return response()->json(["error" => "No cover photo found"], HttpStatusCodes::NOT_FOUND->value);
 })->middleware('jwt.auth');
+
+// Get terms of use PDF
+Route::get('/terms-of-use', function() {
+    if(Storage::exists("termos-de-uso.pdf")) {
+      $response = response()->file(Storage::path("termos-de-uso.pdf"), ["Cache-Control" => "no-cache"]);
+      return $response;
+    }
+    return response()->json(["error" => "No terms of use file found"], HttpStatusCodes::NOT_FOUND->value);
+});

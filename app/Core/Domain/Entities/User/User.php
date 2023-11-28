@@ -80,6 +80,7 @@ class User {
   }
 
   public function isEmailConfirmed(): bool {
+    info(json_encode($this->emailConfirmed));
     return $this->emailConfirmed;
   }
 

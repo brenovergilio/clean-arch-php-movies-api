@@ -20,7 +20,7 @@ class OrderMovies {
     public array $orderByProps
   ) {
     foreach($orderByProps as $props) {
-      if(!in_array($props->fieldName, ["title", "isPublic", "releaseDate", "addedAt"])) {
+      if(!in_array($props->fieldName, ["title", "directorName", "isPublic", "releaseDate", "addedAt"])) {
         $props->fieldName = null;
       }
     }

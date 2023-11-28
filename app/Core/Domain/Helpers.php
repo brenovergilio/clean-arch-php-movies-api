@@ -17,6 +17,14 @@ class Helpers {
     return $randomString;
   }
 
+  public static function convertStringBoolToPrimitive(string|bool $value): bool {
+    if(!is_bool($value)) {
+      return $value === "true";
+    }
+    
+    return $value;
+  }
+
   const ONE_HOUR_IN_SECONDS = 60 * 60;
   const ONE_WEEK_IN_SECONDS = 60 * 60 * 24 * 7;
 }

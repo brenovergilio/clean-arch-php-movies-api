@@ -68,6 +68,7 @@ class EloquentMovieRepository implements MovieRepository {
         if($orderByProps->fieldName) {
           $fieldName = match($orderByProps->fieldName) {
             "releaseDate" => "release_date",
+            "directorName" => "director_name",
             "isPublic" => "is_public",
             "addedAt" => "created_at",
             "title" => "title",

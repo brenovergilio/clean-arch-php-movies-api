@@ -16,13 +16,13 @@ class PrimitiveTypeValidation implements Validation {
           if(!is_string($field)) return new InvalidFieldException($this->fieldName);
           break;
       case 'int':
-          if(!is_int($field)) return new InvalidFieldException($this->fieldName);
+          if(filter_var($input, FILTER_VALIDATE_INT) !== false) return new InvalidFieldException($this->fieldName);
           break;
       case 'float':
-          if(!is_float($field)) return new InvalidFieldException($this->fieldName);
+          if(filter_var($input, FILTER_VALIDATE_FLOAT) !== false) return new InvalidFieldException($this->fieldName);
           break;
       case 'bool':
-          if(!is_bool($field)) return new InvalidFieldException($this->fieldName);
+          if(!is_bool($field) && $field !== "true" && $field !== "false") return new InvalidFieldException($this->fieldName);
           break;
       default:
           return null;
