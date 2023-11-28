@@ -14,6 +14,9 @@ Obs: Rotas de update foram implementadas utilizando POST por esperarem request c
 - Caso um usuário está com email não validado, a rota de listagem de filmes listará apenas filmes públicos. Caso contrário, listará todos (também sendo possível filtrar por visibilidade);
 - Caso um usuário troque de email, seu email volta a ser "não confirmado" e receberá um novo token de validação;
 
+#### URL de produção:
+https://clean-arch-php-movies-api-production.up.railway.app/api
+
 #### Usuários predefinidos (tanto localmente quando em produção)
 - **Administrador**: {
     email: "admin@mail.com", "password": "password"
