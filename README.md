@@ -33,11 +33,11 @@ Obs: Rotas de update foram implementadas utilizando POST por esperarem request c
 ```
 composer require laravel/sail --dev
 ```
+- Copie o arquivo .env.example para um arquivo .env
 - Rode o seguinte comando para subir os containers docker
 ```
 sail up -d
 ```
-- Copie o arquivo .env.example para um arquivo .env
 - Rode o seguinte comando para gerar uma app key
 ```
 sail artisan key:generate --ansi
