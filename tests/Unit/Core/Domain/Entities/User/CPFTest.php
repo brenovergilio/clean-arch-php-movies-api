@@ -19,8 +19,13 @@ it("should throw an MissingRequiredFieldException because parameter was empty", 
   })->toThrow("Field CPF is missing");
 });
 
-it("should throw an InvalidFieldException because parameter does not has 11 digits", function () {
+it("should throw an InvalidFieldException because CPF is invalid", function () {
   expect(function() {
-    new CPF("146.290.370-392");
+    new CPF("111.111.111-11");
   })->toThrow("Field CPF is invalid");
+});
+
+it("should throw no errors because CPF is valid", function () {
+  $cpf = new CPF("146.290.370-39");
+  expect($cpf->getValue())->toBe("14629037039");
 });
