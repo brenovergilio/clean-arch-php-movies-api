@@ -9,6 +9,7 @@ use App\Presentation\Validations\InstanceOfValidation;
 use App\Presentation\Validations\IsEnumValidation;
 use App\Presentation\Validations\OrderInputValidation;
 use App\Presentation\Validations\PasswordValidation;
+use App\Presentation\Validations\PositiveNumberValidation;
 use App\Presentation\Validations\PrimitiveTypeValidation;
 use App\Presentation\Validations\RequiredFieldValidation;
 use App\Presentation\Validations\ValidationComposite;
@@ -23,6 +24,7 @@ beforeEach(function() {
   $this->passwordValidation = Mockery::mock(PasswordValidation::class);
   $this->primitiveTypeValidation = Mockery::mock(PrimitiveTypeValidation::class);
   $this->orderInputValidation = Mockery::mock(OrderInputValidation::class);
+  $this->positiveNumberValidation = Mockery::mock(PositiveNumberValidation::class);
 
   $this->sut = new ValidationComposite([
     $this->cpfValidation,
@@ -33,7 +35,8 @@ beforeEach(function() {
     $this->isEnumValidation,
     $this->passwordValidation,
     $this->primitiveTypeValidation,
-    $this->orderInputValidation
+    $this->orderInputValidation,
+    $this->positiveNumberValidation
   ]);
 });
 
@@ -51,6 +54,7 @@ it("should return an InvalidFieldException because cpfValidation returned an exc
   $this->passwordValidation->shouldReceive('validate')->andReturn(null);
   $this->primitiveTypeValidation->shouldReceive('validate')->andReturn(null);
   $this->orderInputValidation->shouldReceive('validate')->andReturn(null);
+  $this->positiveNumberValidation->shouldReceive('validate')->andReturn(null);
 
   $result = $this->sut->validate(new stdClass);
 
@@ -67,6 +71,7 @@ it("should return an InvalidFieldException because emailValidation returned an e
   $this->passwordValidation->shouldReceive('validate')->andReturn(null);
   $this->primitiveTypeValidation->shouldReceive('validate')->andReturn(null);
   $this->orderInputValidation->shouldReceive('validate')->andReturn(null);
+  $this->positiveNumberValidation->shouldReceive('validate')->andReturn(null);
 
   $result = $this->sut->validate(new stdClass);
   
@@ -83,6 +88,7 @@ it("should return a MissingRequiredField because requiredFieldValidation returne
   $this->passwordValidation->shouldReceive('validate')->andReturn(null);
   $this->primitiveTypeValidation->shouldReceive('validate')->andReturn(null);
   $this->orderInputValidation->shouldReceive('validate')->andReturn(null);
+  $this->positiveNumberValidation->shouldReceive('validate')->andReturn(null);
 
   $result = $this->sut->validate(new stdClass);
   
@@ -99,6 +105,7 @@ it("should return a MissingRequiredField because dateTimeValidation returned an 
   $this->passwordValidation->shouldReceive('validate')->andReturn(null);
   $this->primitiveTypeValidation->shouldReceive('validate')->andReturn(null);
   $this->orderInputValidation->shouldReceive('validate')->andReturn(null);
+  $this->positiveNumberValidation->shouldReceive('validate')->andReturn(null);
 
   $result = $this->sut->validate(new stdClass);
   
@@ -115,6 +122,7 @@ it("should return a MissingRequiredField because instanceOfValidation returned a
   $this->passwordValidation->shouldReceive('validate')->andReturn(null);
   $this->primitiveTypeValidation->shouldReceive('validate')->andReturn(null);
   $this->orderInputValidation->shouldReceive('validate')->andReturn(null);
+  $this->positiveNumberValidation->shouldReceive('validate')->andReturn(null);
 
   $result = $this->sut->validate(new stdClass);
   
@@ -147,6 +155,7 @@ it("should return a MissingRequiredField because passwordValidation returned an 
   $this->passwordValidation->shouldReceive('validate')->andReturn(null);
   $this->primitiveTypeValidation->shouldReceive('validate')->andReturn(null);
   $this->orderInputValidation->shouldReceive('validate')->andReturn(null);
+  $this->positiveNumberValidation->shouldReceive('validate')->andReturn(null);
 
   $result = $this->sut->validate(new stdClass);
   
@@ -163,6 +172,7 @@ it("should return a MissingRequiredField because primitiveTypeValidation returne
   $this->passwordValidation->shouldReceive('validate')->andReturn(null);
   $this->primitiveTypeValidation->shouldReceive('validate')->andReturn(null);
   $this->orderInputValidation->shouldReceive('validate')->andReturn(null);
+  $this->positiveNumberValidation->shouldReceive('validate')->andReturn(null);
 
   $result = $this->sut->validate(new stdClass);
   
@@ -179,10 +189,28 @@ it("should return a InvalidOrderInputException because orderInputValidation retu
   $this->passwordValidation->shouldReceive('validate')->andReturn(null);
   $this->primitiveTypeValidation->shouldReceive('validate')->andReturn(null);
   $this->orderInputValidation->shouldReceive('validate')->andReturn(new InvalidOrderInputException());
+  $this->positiveNumberValidation->shouldReceive('validate')->andReturn(null);
 
   $result = $this->sut->validate(new stdClass);
   
   expect($result)->toBeInstanceOf(InvalidOrderInputException::class);
+});
+
+it("should return a InvalidFieldException because positiveNumberValidation returned an exception", function() {
+  $this->emailValidation->shouldReceive('validate')->andReturn(null);
+  $this->cpfValidation->shouldReceive('validate')->andReturn(null);
+  $this->requiredFieldValidation->shouldReceive('validate')->andReturn(null);
+  $this->dateTimeValidation->shouldReceive('validate')->andReturn(null);
+  $this->instanceOfValidation->shouldReceive('validate')->andReturn(null);
+  $this->isEnumValidation->shouldReceive('validate')->andReturn(null);
+  $this->passwordValidation->shouldReceive('validate')->andReturn(null);
+  $this->primitiveTypeValidation->shouldReceive('validate')->andReturn(null);
+  $this->orderInputValidation->shouldReceive('validate')->andReturn(null);
+  $this->positiveNumberValidation->shouldReceive('validate')->andReturn(new InvalidFieldException("field"));
+
+  $result = $this->sut->validate(new stdClass);
+  
+  expect($result)->toBeInstanceOf(InvalidFieldException::class);
 });
 
 
@@ -196,6 +224,7 @@ it("should return null because all validations returned null", function() {
   $this->passwordValidation->shouldReceive('validate')->andReturn(null);
   $this->primitiveTypeValidation->shouldReceive('validate')->andReturn(null);
   $this->orderInputValidation->shouldReceive('validate')->andReturn(null);
+  $this->positiveNumberValidation->shouldReceive('validate')->andReturn(null);
 
   $result = $this->sut->validate(new stdClass);
   
