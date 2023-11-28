@@ -5,7 +5,6 @@ use App\Core\Application\UseCases\Movie\FindManyMovies\DTO\FindManyMoviesInputDT
 use App\Core\Application\UseCases\Movie\FindManyMovies\DTO\FindManyMoviesOutputDTO;
 use App\Core\Domain\Entities\Movie\MovieRepository;
 use App\Core\Domain\Entities\User\User;
-use App\Core\Domain\Protocols\PaginatedResult;
 
 class FindManyMoviesUseCase {
   public function __construct(
@@ -40,6 +39,6 @@ class FindManyMoviesUseCase {
       return $returnObj;
     }, $paginatedMovies->data);
 
-    return new PaginatedResult($outputMappedMovies, $paginatedMovies->paginationProps);
+    return new FindManyMoviesOutputDTO($outputMappedMovies, $paginatedMovies->paginationProps);
   }
 }
