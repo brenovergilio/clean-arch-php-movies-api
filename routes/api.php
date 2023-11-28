@@ -210,10 +210,3 @@ Route::get('/terms-of-use', function() {
     }
     return response()->json(["error" => "No terms of use file found"], HttpStatusCodes::NOT_FOUND->value);
 });
-
-Route::post('/terms-of-use', function(Request $request) {
-    
-    $file = $request->file('terms');
-    $file->storeAs('', 'termos-de-uso.pdf');
-    return "ok";
-});
