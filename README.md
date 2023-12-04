@@ -32,15 +32,15 @@ https://clean-arch-php-movies-api-production.up.railway.app/api
 
 #### Instruções para rodar localmente (necessário ter o composer e docker instalados)
 - Clone o projeto
-- Entre na pasta do projeto clonado e rode o seguinte comando para instalar as dependências
+- Entre na pasta do projeto clonado e rode o seguinte comando para instalar o **sail** e as dependências
 ```
-composer install
+composer require laravel/sail --dev
 ```
-- Copie o arquivo .env.example para um arquivo .env
 - Caso um alias para o **sail** não seja gerado automaticamente, rode o seguinte comando:
 ```
 alias sail="./vendor/bin/sail"  
 ```
+- Copie o arquivo .env.example para um arquivo .env
 - Rode o seguinte comando para subir os containers docker
 ```
 sail up -d
