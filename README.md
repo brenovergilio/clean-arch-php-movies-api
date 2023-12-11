@@ -19,15 +19,15 @@ https://clean-arch-php-movies-api-production.up.railway.app/api
 
 #### Usuários predefinidos (tanto localmente quando em produção)
 - **Administrador**: {
-    email: "admin@mail.com", "password": "password"
+    "email": "admin@mail.com", "password": "password"
 }
 
 - **Usuário com email verificado**: {
-    email: "verified@mail.com", "password": "password"
+    "email": "verified@mail.com", "password": "password"
 }
 
 - **Usuário com email não verificado**: {
-    email: "unverified@mail.com", "password": "password"
+    "email": "unverified@mail.com", "password": "password"
 }
 
 #### Instruções para rodar localmente (necessário ter o composer e docker instalados)
